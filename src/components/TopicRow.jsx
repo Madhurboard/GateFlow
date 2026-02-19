@@ -3,24 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 const stateConfig = {
     not_started: {
         label: 'Not Started',
-        bg: 'bg-slate-700/50',
+        bg: 'bg-white/5 hover:bg-white/10',
         text: 'text-slate-400',
-        ring: '',
-        dot: 'bg-slate-500',
+        dot: 'bg-slate-600',
     },
     in_progress: {
         label: 'In Progress',
-        bg: 'bg-warning/10',
+        bg: 'bg-warning/10 hover:bg-warning/20',
         text: 'text-warning',
-        ring: 'ring-1 ring-warning/30',
-        dot: 'bg-warning',
+        dot: 'bg-warning shadow-glow-warning',
     },
     confident: {
         label: 'Confident',
-        bg: 'bg-success/10',
+        bg: 'bg-success/10 hover:bg-success/20',
         text: 'text-success',
-        ring: 'ring-1 ring-success/30',
-        dot: 'bg-success',
+        dot: 'bg-success shadow-glow-success',
     },
 };
 
@@ -29,26 +26,19 @@ export default function TopicRow({ topic, state, onToggle, index }) {
 
     return (
         <motion.div
-            className="flex items-center justify-between p-4 glass-card mb-3"
-            initial={{ opacity: 0, x: -20 }}
+            className="flex items-center justify-between p-4 mb-3 glass-card bg-surface-card/50 border border-white/5 hover:border-white/10 transition-colors group"
+            initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{
                 duration: 0.4,
-                delay: index * 0.06,
-                ease: [0.25, 0.46, 0.45, 0.94],
+                delay: index * 0.05,
             }}
         >
             {/* Topic name */}
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-                <motion.div
-                    className={`w-2.5 h-2.5 rounded-full ${config.dot} flex-shrink-0`}
-                    animate={{
-                        scale: state === 'confident' ? [1, 1.3, 1] : 1,
-                    }}
-                    transition={{ duration: 0.3 }}
-                />
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+                <div className={`w-2 h-2 rounded-full ${config.dot} transition-all duration-300`} />
                 <span
-                    className={`text-sm font-medium truncate ${state === 'confident' ? 'text-slate-300' : 'text-slate-200'
+                    className={`text-sm font-medium truncate transition-colors duration-300 ${state === 'confident' ? 'text-slate-300' : 'text-slate-400 group-hover:text-slate-200'
                         }`}
                 >
                     {topic.name}
@@ -57,19 +47,18 @@ export default function TopicRow({ topic, state, onToggle, index }) {
 
             {/* Toggle button */}
             <motion.button
-                className={`ml-4 px-4 py-1.5 rounded-full text-xs font-semibold transition-colors
-          ${config.bg} ${config.text} ${config.ring} flex-shrink-0 cursor-pointer`}
+                className={`ml-4 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase transition-all duration-200
+          ${config.bg} ${config.text} border border-transparent hover:border-white/5 flex-shrink-0 cursor-pointer`}
                 onClick={onToggle}
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 layout
             >
                 <AnimatePresence mode="wait">
                     <motion.span
                         key={state}
-                        initial={{ opacity: 0, y: 8 }}
+                        initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
+                        exit={{ opacity: 0, y: -5 }}
                         transition={{ duration: 0.15 }}
                     >
                         {config.label}

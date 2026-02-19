@@ -10,103 +10,101 @@ export default function SubjectDetail() {
     const { getTopicState, cycleTopicState, getSubjectProgress } = useProgress();
 
     const subject = subjects.find((s) => s.id === id);
+
+    // Handle not found
     if (!subject) {
         return (
-            <div className="max-w-3xl mx-auto px-4 py-16 text-center">
-                <span className="text-5xl mb-4 block">🤔</span>
-                <h2 className="text-xl font-semibold text-white mb-2">Subject not found</h2>
-                <button
-                    onClick={() => navigate('/')}
-                    className="text-primary text-sm hover:underline cursor-pointer"
-                >
-                    ← Back to Dashboard
-                </button>
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold text-white mb-4">Subject Not Found</h2>
+                    <button
+                        onClick={() => navigate('/')}
+                        className="text-primary hover:text-white transition-colors"
+                    >
+                        Go Home
+                    </button>
+                </div>
             </div>
-        );
+        )
     }
 
     const progress = getSubjectProgress(subject.id);
 
     return (
         <motion.div
-            className="max-w-3xl mx-auto px-4 sm:px-6 py-8"
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="relative min-h-screen"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
         >
-            {/* Back button */}
-            <motion.button
-                className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors mb-8 cursor-pointer group"
-                onClick={() => navigate('/')}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.1 }}
-            >
-                <span className="group-hover:-translate-x-1 transition-transform">←</span>
-                Dashboard
-            </motion.button>
+            <div className="glow-radial-top" />
+            <div className="glow-radial-bottom" />
 
-            {/* Header */}
-            <motion.div
-                className="mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
-                <div className="flex items-center gap-3 mb-4">
-                    <span className="text-3xl">{subject.icon}</span>
-                    <div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-white">{subject.name}</h1>
-                        <p className="text-sm text-slate-400">
-                            {progress.completed} of {progress.total} topics mastered
-                        </p>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 relative z-10">
+                {/* Back button */}
+                <motion.button
+                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition-colors mb-12 group font-medium"
+                    onClick={() => navigate('/')}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                >
+                    <span className="group-hover:-translate-x-1 transition-transform">←</span>
+                    Dashboard
+                </motion.button>
+
+                {/* Header */}
+                <motion.div
+                    className="mb-16"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
+                        <div className="flex items-center gap-6">
+                            <div className="w-16 h-16 rounded-2xl bg-surface-card border border-surface-border flex items-center justify-center shadow-card text-4xl">
+                                {subject.icon}
+                            </div>
+                            <div>
+                                <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2">{subject.name}</h1>
+                                <p className="text-slate-400 font-medium">
+                                    {progress.completed} of {progress.total} topics mastered
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="text-left sm:text-right">
+                            <div className="text-4xl font-bold text-white tracking-tight">{progress.percentage}%</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Completion</div>
+                        </div>
                     </div>
-                </div>
 
-                {/* Progress bar */}
-                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div
-                        className="h-full rounded-full bg-gradient-to-r from-primary to-success"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progress.percentage}%` }}
-                        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-                    />
-                </div>
-                <div className="flex justify-between mt-2">
-                    <span className="text-xs text-slate-500">{progress.percentage}% complete</span>
-                    <span className="text-xs text-slate-500">
-                        {progress.inProgress} in progress
-                    </span>
-                </div>
-            </motion.div>
+                    {/* Progress bar */}
+                    <div className="w-full h-1.5 bg-surface-border rounded-full overflow-hidden">
+                        <motion.div
+                            className={`h-full rounded-full ${progress.percentage === 100 ? 'bg-success shadow-glow-success' : 'bg-primary shadow-glow-primary'
+                                }`}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progress.percentage}%` }}
+                            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+                        />
+                    </div>
+                </motion.div>
 
-            {/* Topic List */}
-            <div>
-                {subject.topics.map((topic, index) => (
-                    <TopicRow
-                        key={topic.id}
-                        topic={topic}
-                        state={getTopicState(topic.id)}
-                        onToggle={() => cycleTopicState(topic.id)}
-                        index={index}
-                    />
-                ))}
+                {/* Topic List */}
+                <div className="space-y-4 pb-24">
+                    {subject.topics.map((topic, index) => (
+                        <TopicRow
+                            key={topic.id}
+                            topic={topic}
+                            state={getTopicState(topic.id)}
+                            onToggle={() => cycleTopicState(topic.id)}
+                            index={index}
+                        />
+                    ))}
+                </div>
             </div>
-
-            {/* Tip */}
-            <motion.div
-                className="mt-8 glass-card p-4 text-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-            >
-                <p className="text-xs text-slate-500">
-                    💡 Tap the status badge to cycle: <span className="text-slate-400">Not Started</span> →{' '}
-                    <span className="text-warning">In Progress</span> →{' '}
-                    <span className="text-success">Confident</span>
-                </p>
-            </motion.div>
         </motion.div>
     );
 }

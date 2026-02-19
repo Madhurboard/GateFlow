@@ -7,43 +7,37 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
         primary: {
-          DEFAULT: '#4F46E5',
-          50: '#EEEDFC',
-          100: '#D9D7FA',
-          200: '#B3AFF5',
-          300: '#8D87F0',
-          400: '#6E66EA',
-          500: '#4F46E5',
-          600: '#2F25D0',
-          700: '#241DA0',
-          800: '#1A1570',
-          900: '#100D41',
+          DEFAULT: '#4F46E5', // Indigo
+          glow: 'rgba(79, 70, 229, 0.5)', 
         },
         success: {
-          DEFAULT: '#10B981',
-          500: '#10B981',
-          600: '#059669',
+          DEFAULT: '#10B981', // Emerald
+          glow: 'rgba(16, 185, 129, 0.5)',
         },
         warning: {
-          DEFAULT: '#F59E0B',
-          500: '#F59E0B',
-          600: '#D97706',
+          DEFAULT: '#F59E0B', // Amber
+          glow: 'rgba(245, 158, 11, 0.5)',
         },
-        danger: {
-          DEFAULT: '#EF4444',
-          500: '#EF4444',
-          600: '#DC2626',
+        neutral: {
+          DEFAULT: '#374151', // Gray
+          glow: 'rgba(55, 65, 81, 0.5)',
         },
         surface: {
-          DEFAULT: '#1E293B',
-          light: '#334155',
-          dark: '#0F172A',
-        },
+          card: 'rgba(255, 255, 255, 0.04)',
+          border: 'rgba(255, 255, 255, 0.08)',
+        }
       },
+      boxShadow: {
+        'glow-primary': '0 0 20px rgba(79, 70, 229, 0.3)',
+        'glow-success': '0 0 20px rgba(16, 185, 129, 0.3)',
+        'glow-warning': '0 0 20px rgba(245, 158, 11, 0.3)',
+        'card': '0 4px 24px rgba(0, 0, 0, 0.3)',
+        'card-hover': '0 8px 32px rgba(0, 0, 0, 0.4)',
+      }
     },
   },
   plugins: [],
