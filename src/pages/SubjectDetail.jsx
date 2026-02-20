@@ -44,7 +44,7 @@ export default function SubjectDetail() {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 relative z-10">
                 {/* Back button */}
                 <motion.button
-                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition-colors mb-12 group font-medium"
+                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition-colors mb-8 sm:mb-12 group font-medium py-2 pr-4 -ml-2 select-none"
                     onClick={() => navigate('/')}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -61,7 +61,7 @@ export default function SubjectDetail() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-8">
                         <div className="flex items-center gap-6">
                             <div className="w-16 h-16 rounded-2xl bg-surface-card border border-surface-border flex items-center justify-center shadow-card text-4xl">
                                 {subject.icon}

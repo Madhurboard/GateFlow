@@ -22,36 +22,35 @@ const stateConfig = {
 };
 
 export default function TopicRow({ topic, state, onToggle, index }) {
-    const config = stateConfig[state];
+    const config = stateConfig[state] || stateConfig.not_started;
 
     return (
         <motion.div
-            className="flex items-center justify-between p-4 mb-3 glass-card bg-surface-card/50 border border-white/5 hover:border-white/10 transition-colors group"
+            className="flex flex-col sm:flex-row sm:items-center justify-between p-4 mb-3 glass-card bg-surface-card/50 border border-white/5 hover:border-white/10 transition-colors group cursor-pointer"
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{
                 duration: 0.4,
                 delay: index * 0.05,
             }}
+            onClick={onToggle}
+            whileTap={{ scale: 0.98 }}
         >
             {/* Topic name */}
-            <div className="flex items-center gap-4 flex-1 min-w-0">
+            <div className="flex items-center gap-4 flex-1 min-w-0 mb-3 sm:mb-0">
                 <div className={`w-2 h-2 rounded-full ${config.dot} transition-all duration-300`} />
                 <span
-                    className={`text-sm font-medium truncate transition-colors duration-300 ${state === 'confident' ? 'text-slate-300' : 'text-slate-400 group-hover:text-slate-200'
+                    className={`text-sm md:text-base font-medium transition-colors duration-300 ${state === 'confident' ? 'text-slate-200' : 'text-slate-300 group-hover:text-white'
                         }`}
                 >
                     {topic.name}
                 </span>
             </div>
 
-            {/* Toggle button */}
-            <motion.button
-                className={`ml-4 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase transition-all duration-200
-          ${config.bg} ${config.text} border border-transparent hover:border-white/5 flex-shrink-0 cursor-pointer`}
-                onClick={onToggle}
-                whileTap={{ scale: 0.95 }}
-                layout
+            {/* Toggle button indicator */}
+            <div
+                className={`sm:ml-4 px-4 py-2 sm:py-1.5 rounded-full text-xs font-bold tracking-wide uppercase transition-all duration-200
+          ${config.bg} ${config.text} border border-transparent group-hover:border-white/10 flex-shrink-0 text-center select-none`}
             >
                 <AnimatePresence mode="wait">
                     <motion.span
@@ -64,7 +63,7 @@ export default function TopicRow({ topic, state, onToggle, index }) {
                         {config.label}
                     </motion.span>
                 </AnimatePresence>
-            </motion.button>
+            </div>
         </motion.div>
     );
 }

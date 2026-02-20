@@ -27,14 +27,14 @@ export default function Dashboard() {
             <div className="glow-radial-top" />
             <div className="glow-radial-bottom" />
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 relative z-10 pb-24">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12 relative z-10 pb-24">
                 {/* Hero Section */}
-                <section className="flex flex-col items-center text-center mb-16 lg:mb-24">
+                <section className="flex flex-col items-center text-center mb-8 sm:mb-16 lg:mb-24">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
-                        className="mb-8 relative"
+                        className="mb-4 sm:mb-8 relative transform scale-75 sm:scale-100 origin-center"
                     >
                         <ProgressRing percentage={overall} />
                     </motion.div>
@@ -44,7 +44,7 @@ export default function Dashboard() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.3 }}
                     >
-                        <h1 className="text-4xl sm:text-[44px] font-bold text-white mb-3 tracking-tight">
+                        <h1 className="text-3xl sm:text-4xl md:text-[44px] font-bold text-white mb-2 sm:mb-3 tracking-tight">
                             Your GATE Journey
                         </h1>
                         <p className="text-slate-500 font-semibold uppercase tracking-widest text-xs">
