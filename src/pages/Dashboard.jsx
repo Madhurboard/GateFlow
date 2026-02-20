@@ -16,9 +16,9 @@ export default function Dashboard() {
     // Bento Grid Logic: OS, Algo, DBMS are taller cards
     const getCardClass = (id) => {
         if (['os', 'algo', 'dbms'].includes(id)) {
-            return 'md:row-span-2 h-full min-h-[320px]';
+            return 'md:row-span-2 h-full min-h-[280px] lg:min-h-[300px] xl:min-h-[290px]';
         }
-        return 'h-full min-h-[240px]';
+        return 'h-full min-h-[200px] lg:min-h-[220px] xl:min-h-[210px]';
     };
 
     return (
@@ -44,7 +44,7 @@ export default function Dashboard() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.3 }}
                     >
-                        <h1 className="text-3xl sm:text-4xl md:text-[44px] font-bold text-white mb-2 sm:mb-3 tracking-tight">
+                        <h1 className="text-3xl sm:text-4xl md:text-[44px] lg:text-5xl lg:mb-4 font-bold text-white mb-2 sm:mb-3 tracking-tight">
                             Your GATE Journey
                         </h1>
                         <p className="text-slate-500 font-semibold uppercase tracking-widest text-xs">

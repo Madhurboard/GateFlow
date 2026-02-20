@@ -41,7 +41,7 @@ export default function SubjectDetail() {
             <div className="glow-radial-top" />
             <div className="glow-radial-bottom" />
 
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 relative z-10">
+            <div className="max-w-4xl xl:max-w-6xl mx-auto px-4 sm:px-6 py-12 relative z-10 w-full">
                 {/* Back button */}
                 <motion.button
                     className="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition-colors mb-8 sm:mb-12 group font-medium py-2 pr-4 -ml-2 select-none"
