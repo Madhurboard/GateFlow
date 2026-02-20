@@ -91,6 +91,25 @@ export function useProgress() {
     });
   }, []);
 
+  const getSubtopicState = useCallback(
+    (subtopicId) => progress[subtopicId] === 'confident',
+    [progress]
+  );
+
+  const toggleSubtopicState = useCallback((subtopicId) => {
+    setProgress((prev) => {
+      const current = prev[subtopicId] === 'confident';
+      return { ...prev, [subtopicId]: current ? 'not_started' : 'confident' };
+    });
+
+    // Record streak activity
+    const today = getToday();
+    setStreakDates((prev) => {
+      if (prev.includes(today)) return prev;
+      return [...prev, today];
+    });
+  }, []);
+
   const getSubjectProgress = useCallback(
     (subjectId) => {
       const subject = subjects.find((s) => s.id === subjectId);
@@ -137,6 +156,8 @@ export function useProgress() {
   return {
     getTopicState,
     cycleTopicState,
+    getSubtopicState,
+    toggleSubtopicState,
     getSubjectProgress,
     getOverallProgress,
     getStreak,

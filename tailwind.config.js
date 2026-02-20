@@ -11,32 +11,33 @@ export default {
       },
       colors: {
         primary: {
-          DEFAULT: '#4F46E5', // Indigo
-          glow: 'rgba(79, 70, 229, 0.5)', 
+          DEFAULT: '#6366F1', // Brighter Indigo
+          glow: 'rgba(99, 102, 241, 0.6)', 
         },
         success: {
-          DEFAULT: '#10B981', // Emerald
-          glow: 'rgba(16, 185, 129, 0.5)',
+          DEFAULT: '#22C55E', // Brighter Green
+          glow: 'rgba(34, 197, 94, 0.6)',
         },
         warning: {
           DEFAULT: '#F59E0B', // Amber
-          glow: 'rgba(245, 158, 11, 0.5)',
+          glow: 'rgba(245, 158, 11, 0.6)',
         },
         neutral: {
           DEFAULT: '#94A3B8', // Slate 400
-          glow: 'rgba(148, 163, 184, 0.5)',
+          glow: 'rgba(148, 163, 184, 0.4)',
         },
         surface: {
-          card: 'rgba(255, 255, 255, 0.04)',
-          border: 'rgba(255, 255, 255, 0.08)',
+          card: 'rgba(255, 255, 255, 0.03)',
+          border: 'rgba(255, 255, 255, 0.1)',
+          hover: 'rgba(255, 255, 255, 0.06)',
         }
       },
       boxShadow: {
-        'glow-primary': '0 0 20px rgba(79, 70, 229, 0.3)',
-        'glow-success': '0 0 20px rgba(16, 185, 129, 0.3)',
-        'glow-warning': '0 0 20px rgba(245, 158, 11, 0.3)',
-        'card': '0 4px 24px rgba(0, 0, 0, 0.3)',
-        'card-hover': '0 8px 32px rgba(0, 0, 0, 0.4)',
+        'glow-primary': '0 0 25px rgba(99, 102, 241, 0.4)',
+        'glow-success': '0 0 25px rgba(34, 197, 94, 0.4)',
+        'glow-warning': '0 0 25px rgba(245, 158, 11, 0.4)',
+        'card': '0 8px 32px rgba(0, 0, 0, 0.4)',
+        'card-hover': '0 12px 48px rgba(0, 0, 0, 0.6)',
       }
     },
   },

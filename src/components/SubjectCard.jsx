@@ -34,7 +34,7 @@ export default function SubjectCard({ subject, progress, index, className = '' }
 
     return (
         <motion.div
-            className={`relative glass-card bg-surface-card border border-surface-border p-6 cursor-pointer overflow-hidden group hover:shadow-card-hover ${className}`}
+            className={`relative glass-card bg-surface-card border border-surface-border p-6 sm:p-7 flex flex-col justify-between h-full cursor-pointer overflow-hidden group transition-all duration-300 ${className}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -43,41 +43,41 @@ export default function SubjectCard({ subject, progress, index, className = '' }
                 ease: [0.25, 0.46, 0.45, 0.94],
             }}
             whileHover={{
-                scale: 1.02,
-                borderColor: 'rgba(255,255,255,0.15)',
+                y: -4,
+                scale: 1.01,
                 transition: { duration: 0.2 },
             }}
             onClick={() => navigate(`/subject/${subject.id}`)}
         >
             {/* Left accent border */}
-            <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${config.border}`} />
+            <div className={`absolute left-0 top-0 bottom-0 w-[4px] ${config.border}`} />
 
             <div className="flex flex-col h-full justify-between">
                 <div>
-                    <div className="flex justify-between items-start mb-4">
-                        <span className="text-3xl filter drop-shadow-md">{subject.icon}</span>
-                        <div className={`px-2 py-1 rounded-full bg-white/5 backdrop-blur-md border border-white/5`}>
-                            <span className={`text-[10px] uppercase font-bold tracking-wider ${config.color}`}>
+                    <div className="flex justify-between items-start mb-5 block">
+                        <span className="text-4xl filter drop-shadow-md">{subject.icon}</span>
+                        <div className={`px-3 py-1.5 rounded-full ${config.bg}/20 backdrop-blur-md border border-${config.bg.split('-')[1]}/30`}>
+                            <span className={`text-[11px] uppercase font-bold tracking-wider ${config.color}`}>
                                 {config.label}
                             </span>
                         </div>
                     </div>
 
-                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-primary-300 transition-colors">
+                    <h3 className="text-xl font-bold text-white mb-1.5 group-hover:text-primary-400 transition-colors">
                         {subject.name}
                     </h3>
-                    <p className="text-xs text-slate-500 font-medium lowercase">
+                    <p className="text-sm text-slate-400 font-medium">
                         {progress.completed} / {progress.total} topics
                     </p>
                 </div>
 
-                <div className="mt-6">
-                    <div className="flex justify-between text-xs mb-1.5">
-                        <span className="text-slate-400 font-medium">Progress</span>
+                <div className="mt-8">
+                    <div className="flex justify-between text-sm mb-2.5">
+                        <span className="text-slate-400 font-medium tracking-wide">Progress</span>
                         <span className="text-white font-bold">{progress.percentage}%</span>
                     </div>
 
-                    <div className="w-full h-[3px] bg-white/10 rounded-full overflow-hidden">
+                    <div className="w-full h-[6px] bg-white/10 rounded-full overflow-hidden shadow-inner">
                         <motion.div
                             className={`h-full rounded-full ${config.barColor} ${config.shadow}`}
                             initial={{ width: 0 }}

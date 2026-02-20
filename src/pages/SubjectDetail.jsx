@@ -7,7 +7,7 @@ import TopicRow from '../components/TopicRow';
 export default function SubjectDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { getTopicState, cycleTopicState, getSubjectProgress } = useProgress();
+    const { getTopicState, cycleTopicState, getSubjectProgress, getSubtopicState, toggleSubtopicState } = useProgress();
 
     const subject = subjects.find((s) => s.id === id);
 
@@ -56,38 +56,42 @@ export default function SubjectDetail() {
 
                 {/* Header */}
                 <motion.div
-                    className="mb-16"
+                    className="mb-12 sm:mb-16 glass-card p-6 sm:p-10"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-8">
-                        <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-2xl bg-surface-card border border-surface-border flex items-center justify-center shadow-card text-4xl">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-8 mb-8">
+                        <div className="flex items-center gap-6 sm:gap-8">
+                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-surface-card border border-surface-border flex items-center justify-center shadow-card text-5xl sm:text-6xl filter drop-shadow-md">
                                 {subject.icon}
                             </div>
                             <div>
-                                <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2">{subject.name}</h1>
-                                <p className="text-slate-400 font-medium">
-                                    {progress.completed} of {progress.total} topics mastered
+                                <h1 className="text-3xl sm:text-[40px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/80 tracking-tight mb-2 sm:mb-3 leading-tight">
+                                    {subject.name}
+                                </h1>
+                                <p className="text-slate-400 font-medium text-sm sm:text-base">
+                                    <span className="text-white font-bold">{progress.completed}</span> of {progress.total} topics mastered
                                 </p>
                             </div>
                         </div>
 
-                        <div className="text-left sm:text-right">
-                            <div className="text-4xl font-bold text-white tracking-tight">{progress.percentage}%</div>
-                            <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Completion</div>
+                        <div className="text-left sm:text-right bg-surface-card border border-surface-border rounded-2xl p-4 sm:p-5 min-w-[140px]">
+                            <div className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-none mb-1">
+                                {progress.percentage}<span className="text-2xl sm:text-3xl text-slate-400 font-bold">%</span>
+                            </div>
+                            <div className="text-[10px] sm:text-xs text-primary-300 font-bold uppercase tracking-[0.2em]">Completion</div>
                         </div>
                     </div>
 
                     {/* Progress bar */}
-                    <div className="w-full h-1.5 bg-surface-border rounded-full overflow-hidden">
+                    <div className="w-full h-2 sm:h-2.5 bg-surface-border rounded-full overflow-hidden shadow-inner">
                         <motion.div
                             className={`h-full rounded-full ${progress.percentage === 100 ? 'bg-success shadow-glow-success' : 'bg-primary shadow-glow-primary'
                                 }`}
                             initial={{ width: 0 }}
                             animate={{ width: `${progress.percentage}%` }}
-                            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+                            transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }}
                         />
                     </div>
                 </motion.div>
@@ -99,8 +103,10 @@ export default function SubjectDetail() {
                             key={topic.id}
                             topic={topic}
                             state={getTopicState(topic.id)}
-                            onToggle={() => cycleTopicState(topic.id)}
+                            onToggle={(e) => { e.stopPropagation(); cycleTopicState(topic.id); }}
                             index={index}
+                            getSubtopicState={getSubtopicState}
+                            toggleSubtopicState={toggleSubtopicState}
                         />
                     ))}
                 </div>
