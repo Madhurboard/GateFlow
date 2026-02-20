@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 const stateConfig = {
     not_started: {
         label: 'Not Started',
-        bg: 'bg-white/5 hover:bg-white/10',
-        text: 'text-slate-400',
-        dot: 'bg-slate-600',
+        bg: 'bg-neutral/20 group-hover:bg-neutral/30',
+        text: 'text-neutral',
+        dot: 'bg-neutral',
     },
     in_progress: {
         label: 'In Progress',
@@ -26,7 +26,7 @@ export default function TopicRow({ topic, state, onToggle, index }) {
 
     return (
         <motion.div
-            className="flex flex-col sm:flex-row sm:items-center justify-between p-4 mb-3 glass-card bg-surface-card/50 border border-white/5 hover:border-white/10 transition-colors group cursor-pointer"
+            className="flex flex-col sm:flex-row sm:items-center justify-between p-4 mb-3 rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all duration-300 group cursor-pointer"
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{

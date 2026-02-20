@@ -23,8 +23,8 @@ export default {
           glow: 'rgba(245, 158, 11, 0.5)',
         },
         neutral: {
-          DEFAULT: '#374151', // Gray
-          glow: 'rgba(55, 65, 81, 0.5)',
+          DEFAULT: '#94A3B8', // Slate 400
+          glow: 'rgba(148, 163, 184, 0.5)',
         },
         surface: {
           card: 'rgba(255, 255, 255, 0.04)',
