@@ -1,41 +1,14 @@
 import { useState, useCallback, useEffect } from 'react';
 import { subjects } from '../data';
-
-const STORAGE_KEY = 'gateflow_progress';
-const STREAK_KEY = 'gateflow_streak';
-
-function loadProgress() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveProgress(progress) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-}
-
-function loadStreak() {
-  try {
-    const raw = localStorage.getItem(STREAK_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveStreak(dates) {
-  localStorage.setItem(STREAK_KEY, JSON.stringify(dates));
-}
+import { supabase } from '../lib/supabase';
+import { useAuth } from './useAuth';
 
 function getToday() {
   return new Date().toISOString().split('T')[0];
 }
 
 function calculateStreak(dates) {
-  if (!dates.length) return 0;
+  if (!dates?.length) return 0;
   const sorted = [...new Set(dates)].sort().reverse();
   const today = getToday();
   const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -59,16 +32,58 @@ function calculateStreak(dates) {
 const STATES = ['not_started', 'in_progress', 'confident'];
 
 export function useProgress() {
-  const [progress, setProgress] = useState(loadProgress);
-  const [streakDates, setStreakDates] = useState(loadStreak);
+  const { user } = useAuth();
+  const [progress, setProgress] = useState({});
+  const [streakDates, setStreakDates] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Load data from Supabase on mount or authentication change
   useEffect(() => {
-    saveProgress(progress);
-  }, [progress]);
+    async function loadData() {
+      if (!user) {
+        setProgress({});
+        setStreakDates([]);
+        setLoading(false);
+        return;
+      }
 
-  useEffect(() => {
-    saveStreak(streakDates);
-  }, [streakDates]);
+      const { data, error } = await supabase
+        .from('user_data')
+        .select('progress, streak_dates')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!error && data) {
+        setProgress(data.progress || {});
+        setStreakDates(data.streak_dates || []);
+      }
+      setLoading(false);
+    }
+    loadData();
+  }, [user]);
+
+  // Generic function to save data to Supabase
+  const saveToSupabase = async (newProgress, newStreak) => {
+    if (!user) return;
+    
+    // Check if user_data row exists
+    const { data: existing } = await supabase
+      .from('user_data')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (existing) {
+      await supabase
+        .from('user_data')
+        .update({ progress: newProgress, streak_dates: newStreak })
+        .eq('user_id', user.id);
+    } else {
+      await supabase
+        .from('user_data')
+        .insert({ user_id: user.id, progress: newProgress, streak_dates: newStreak });
+    }
+  };
 
   const getTopicState = useCallback(
     (topicId) => progress[topicId] || 'not_started',
@@ -80,16 +95,19 @@ export function useProgress() {
       const current = prev[topicId] || 'not_started';
       const idx = STATES.indexOf(current);
       const next = STATES[(idx + 1) % STATES.length];
-      return { ...prev, [topicId]: next };
-    });
+      const newProgress = { ...prev, [topicId]: next };
+      
+      // Update streak inline
+      setStreakDates((prevStreak) => {
+        const today = getToday();
+        const newStreak = prevStreak.includes(today) ? prevStreak : [...prevStreak, today];
+        saveToSupabase(newProgress, newStreak); // Async background save
+        return newStreak;
+      });
 
-    // Record streak activity
-    const today = getToday();
-    setStreakDates((prev) => {
-      if (prev.includes(today)) return prev;
-      return [...prev, today];
+      return newProgress;
     });
-  }, []);
+  }, [user]);
 
   const getSubtopicState = useCallback(
     (subtopicId) => progress[subtopicId] === 'confident',
@@ -99,21 +117,25 @@ export function useProgress() {
   const toggleSubtopicState = useCallback((subtopicId) => {
     setProgress((prev) => {
       const current = prev[subtopicId] === 'confident';
-      return { ...prev, [subtopicId]: current ? 'not_started' : 'confident' };
-    });
+      const newProgress = { ...prev, [subtopicId]: current ? 'not_started' : 'confident' };
+      
+      // Update streak inline
+      setStreakDates((prevStreak) => {
+        const today = getToday();
+        const newStreak = prevStreak.includes(today) ? prevStreak : [...prevStreak, today];
+        saveToSupabase(newProgress, newStreak); // Async background save
+        return newStreak;
+      });
 
-    // Record streak activity
-    const today = getToday();
-    setStreakDates((prev) => {
-      if (prev.includes(today)) return prev;
-      return [...prev, today];
+      return newProgress;
     });
-  }, []);
+  }, [user]);
 
   const getSubjectProgress = useCallback(
     (subjectId) => {
+      if (loading) return { completed: 0, total: 0, percentage: 0, status: 'not_started', inProgress: 0 };
       const subject = subjects.find((s) => s.id === subjectId);
-      if (!subject) return { completed: 0, total: 0, percentage: 0, status: 'not_started' };
+      if (!subject) return { completed: 0, total: 0, percentage: 0, status: 'not_started', inProgress: 0 };
 
       const total = subject.topics.length;
       const confident = subject.topics.filter(
@@ -123,25 +145,27 @@ export function useProgress() {
         (t) => progress[t.id] === 'in_progress'
       ).length;
 
-      const percentage = Math.round((confident / total) * 100);
+      const percentage = Math.round((confident / total) * 100) || 0;
 
       let status = 'not_started';
-      if (confident === total) status = 'confident';
+      if (confident === total && total > 0) status = 'confident';
       else if (confident > 0 || inProgress > 0) status = 'in_progress';
 
       return { completed: confident, total, percentage, status, inProgress };
     },
-    [progress]
+    [progress, loading]
   );
 
   const getOverallProgress = useCallback(() => {
+    if (loading) return 0;
     const allTopics = subjects.flatMap((s) => s.topics);
     const total = allTopics.length;
+    if (total === 0) return 0;
     const confident = allTopics.filter(
-      (t) => progress[t.id] === 'confident'
+        (t) => progress[t.id] === 'confident'
     ).length;
     return Math.round((confident / total) * 100);
-  }, [progress]);
+  }, [progress, loading]);
 
   const getStreak = useCallback(() => {
     return calculateStreak(streakDates);
@@ -162,5 +186,6 @@ export function useProgress() {
     getOverallProgress,
     getStreak,
     hasAnyProgress,
+    loading
   };
 }

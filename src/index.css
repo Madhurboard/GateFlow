@@ -78,7 +78,7 @@
   }
 
   .glass-card {
-    @apply backdrop-blur-2xl bg-surface-card border border-surface-border rounded-3xl transition-all duration-300 shadow-card;
+    @apply backdrop-blur-2xl bg-surface-card border border-surface-border rounded-[2.5rem] transition-all duration-300 shadow-card;
   }
 
   .glass-card:hover {

@@ -36,6 +36,11 @@ export default function Dashboard() {
         }
     };
 
+    // This specific order allows CSS Grid `dense` flow to flawlessly pack the 2x2, 2x1, 1x2, and 1x1 cards
+    // into a perfect 4x6 rectangle on desktop, 3x8 on tablet, and 2x12 on mobile without any holes!
+    const optimalGridOrder = ['em', 'pds', 'os', 'dbms', 'cn', 'toc', 'ga', 'dl', 'coa', 'algo', 'cd'];
+    const orderedSubjects = [...subjects].sort((a, b) => optimalGridOrder.indexOf(a.id) - optimalGridOrder.indexOf(b.id));
+
     return (
         <div className="relative min-h-screen">
             {/* Radial Glows */}
@@ -80,7 +85,7 @@ export default function Dashboard() {
 
                 {/* Symmetrical Bento Grid */}
                 <div className="bento-grid">
-                    {subjects.map((subject, index) => (
+                    {orderedSubjects.map((subject, index) => (
                         <SubjectCard
                             key={subject.id}
                             subject={subject}
