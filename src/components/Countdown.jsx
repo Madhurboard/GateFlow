@@ -35,27 +35,21 @@ export default function Countdown() {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex items-center justify-center mt-6 p-4 sm:p-5 bg-surface-card border border-surface-border rounded-2xl backdrop-blur-xl shadow-card inline-flex"
+            className="flex items-center gap-6"
         >
-            <div className="mr-5 pr-5 sm:mr-6 sm:pr-6 border-r border-white/10 flex flex-col items-center justify-center">
-                <span className="text-[10px] sm:text-xs text-primary font-bold uppercase tracking-[0.2em] mb-1">Target</span>
-                <span className="text-sm sm:text-base font-semibold text-white tracking-widest whitespace-nowrap">FEB 2027</span>
-            </div>
-            <div className="flex items-center gap-3 sm:gap-6">
-                {Object.entries(timeLeft).map(([unit, value]) => (
-                    <div key={unit} className="flex flex-col items-center w-12 sm:w-16">
-                        <span className="text-2xl sm:text-3xl font-bold text-white tracking-tight tabular-nums">
-                            {value.toString().padStart(2, '0')}
-                        </span>
-                        <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest mt-1">
-                            {unit}
-                        </span>
-                    </div>
-                ))}
-            </div>
+            {Object.entries(timeLeft).map(([unit, value]) => (
+                <div key={unit} className="flex flex-col items-center">
+                    <span className="text-3xl font-black text-slate-800 tracking-tight tabular-nums">
+                        {value.toString().padStart(2, '0')}
+                    </span>
+                    <span className="text-[9px] text-slate-400 uppercase font-black tracking-widest">
+                        {unit}
+                    </span>
+                </div>
+            ))}
         </motion.div>
     );
 }

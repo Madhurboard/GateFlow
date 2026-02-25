@@ -31,86 +31,92 @@ export default function SubjectDetail() {
     const progress = getSubjectProgress(subject.id);
 
     return (
-        <motion.div
-            className="relative min-h-screen"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-        >
-            <div className="glow-radial-top" />
-            <div className="glow-radial-bottom" />
+        <div className="animate-in fade-in duration-700">
+            {/* Header / Breadcrumb area */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <div>
+                    <button
+                        onClick={() => navigate('/')}
+                        className="text-primary font-bold text-sm mb-4 flex items-center gap-2 hover:gap-3 transition-all"
+                    >
+                        ← Back to Dashboard
+                    </button>
+                    <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight flex items-center gap-4">
+                        <span className="text-5xl">{subject.icon}</span>
+                        {subject.name}
+                    </h1>
+                </div>
 
-            <div className="max-w-4xl xl:max-w-6xl mx-auto px-4 sm:px-6 py-12 relative z-10 w-full">
-                {/* Back button */}
-                <motion.button
-                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition-colors mb-8 sm:mb-12 group font-medium py-2 pr-4 -ml-2 select-none"
-                    onClick={() => navigate('/')}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 }}
-                >
-                    <span className="group-hover:-translate-x-1 transition-transform">←</span>
-                    Dashboard
-                </motion.button>
-
-                {/* Header */}
-                <motion.div
-                    className="mb-12 sm:mb-16 glass-card p-6 sm:p-10"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-8 mb-8">
-                        <div className="flex items-center gap-6 sm:gap-8">
-                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-surface-card border border-surface-border flex items-center justify-center shadow-card text-5xl sm:text-6xl filter drop-shadow-md">
-                                {subject.icon}
-                            </div>
-                            <div>
-                                <h1 className="text-3xl sm:text-[40px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/80 tracking-tight mb-2 sm:mb-3 leading-tight">
-                                    {subject.name}
-                                </h1>
-                                <p className="text-slate-400 font-medium text-sm sm:text-base">
-                                    <span className="text-white font-bold">{progress.completed}</span> of {progress.total} topics mastered
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="text-left sm:text-right bg-surface-card border border-surface-border rounded-2xl p-4 sm:p-5 min-w-[140px]">
-                            <div className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-none mb-1">
-                                {progress.percentage}<span className="text-2xl sm:text-3xl text-slate-400 font-bold">%</span>
-                            </div>
-                            <div className="text-[10px] sm:text-xs text-primary-300 font-bold uppercase tracking-[0.2em]">Completion</div>
-                        </div>
+                <div className="glass-card p-6 flex flex-col items-center justify-center min-w-[200px]">
+                    <div className="text-4xl font-black text-primary mb-1">
+                        {progress.percentage}%
                     </div>
-
-                    {/* Progress bar */}
-                    <div className="w-full h-2 sm:h-2.5 bg-surface-border rounded-full overflow-hidden shadow-inner">
-                        <motion.div
-                            className={`h-full rounded-full ${progress.percentage === 100 ? 'bg-success shadow-glow-success' : 'bg-primary shadow-glow-primary'
-                                }`}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${progress.percentage}%` }}
-                            transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }}
-                        />
-                    </div>
-                </motion.div>
-
-                {/* Topic List */}
-                <div className="space-y-4 pb-24">
-                    {subject.topics.map((topic, index) => (
-                        <TopicRow
-                            key={topic.id}
-                            topic={topic}
-                            state={getTopicState(topic.id)}
-                            onToggle={(e) => { e.stopPropagation(); cycleTopicState(topic.id); }}
-                            index={index}
-                            getSubtopicState={getSubtopicState}
-                            toggleSubtopicState={toggleSubtopicState}
-                        />
-                    ))}
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Subject Mastery</div>
                 </div>
             </div>
-        </motion.div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                {/* Main Topics List */}
+                <div className="lg:col-span-2 space-y-4">
+                    <h2 className="text-xl font-bold text-slate-800 mb-6 px-2">Syllabus Progress</h2>
+                    <div className="space-y-4">
+                        {subject.topics.map((topic) => (
+                            <TopicRow
+                                key={topic.id}
+                                topic={topic}
+                                progress={progress.topics[topic.id] || { status: 'not_started', subtopics: [] }}
+                                onToggleSubtopic={(subtopicId) => toggleSubtopic(subject.id, topic.id, subtopicId)}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Sidebar Column: Resources & Insights */}
+                <div className="space-y-6">
+                    <div className="glass-card p-8 bg-slate-50/50">
+                        <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                            <span className="text-primary">⚡</span> Key Insights
+                        </h3>
+                        <div className="space-y-6">
+                            <div className="flex gap-4">
+                                <div className="w-10 h-10 rounded-xl bg-primary-light flex-shrink-0 flex items-center justify-center text-primary">
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Topic Analysis</p>
+                                    <p className="text-sm text-slate-600 font-medium leading-relaxed">Focus more on <span className="text-slate-900 border-b-2 border-primary-light">Deadlocks</span> - historically 15% of GATE questions.</p>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Mastery Checklist</p>
+                                <ul className="space-y-3">
+                                    {[
+                                        'Standard Formulae',
+                                        'Previous Year Questions',
+                                        'Short Notes Generated'
+                                    ].map((item, i) => (
+                                        <li key={i} className="flex items-center gap-2 text-sm text-slate-600 font-medium">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="glass-card p-8 bg-primary">
+                        <h3 className="text-white font-bold mb-2">Practice Mode</h3>
+                        <p className="text-white/70 text-sm mb-6">Test your knowledge with 50+ handpicked PYQs.</p>
+                        <button className="w-full py-3 bg-white text-primary font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-lg">
+                            Start Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }

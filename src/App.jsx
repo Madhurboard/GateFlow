@@ -8,30 +8,59 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import AuthRoute from './components/AuthRoute';
 import { AuthProvider } from './hooks/useAuth';
+import Sidebar from './components/Sidebar';
+
+function Layout({ children, streak }) {
+  return (
+    <div className="app-container flex min-h-screen">
+      <Sidebar />
+      <div className="main-content flex-1 flex flex-col min-w-0">
+        <Navbar streak={streak} />
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            {children}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const { getStreak } = useProgress();
 
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/" element={<AuthRoute><Dashboard /></AuthRoute>} />
-        <Route path="/subject/:id" element={<AuthRoute><SubjectDetail /></AuthRoute>} />
+
+        <Route path="/" element={
+          <AuthRoute>
+            <Layout streak={getStreak()}>
+              <Dashboard />
+            </Layout>
+          </AuthRoute>
+        } />
+
+        <Route path="/subject/:id" element={
+          <AuthRoute>
+            <Layout streak={getStreak()}>
+              <SubjectDetail />
+            </Layout>
+          </AuthRoute>
+        } />
       </Routes>
     </AnimatePresence>
   );
 }
 
 export default function App() {
-  const { getStreak } = useProgress();
-
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen">
-          <Navbar streak={getStreak()} />
+        <div className="min-h-screen bg-slate-50">
           <AnimatedRoutes />
         </div>
       </BrowserRouter>

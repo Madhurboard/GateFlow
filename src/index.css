@@ -13,9 +13,8 @@
 
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #05050A 0%, #0A0A14 50%, #050510 100%);
-    background-attachment: fixed;
-    color: #E2E8F0;
+    background-color: #F8FAFC;
+    color: #1E293B;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -23,7 +22,7 @@
   }
 
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -31,106 +30,41 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 4px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid transparent;
-    background-clip: padding-box;
+    background: #CBD5E1;
+    border-radius: 10px;
   }
 }
 
 @layer components {
 
-  /* Bento Grid Layout */
-  .bento-grid {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 1rem;
+  /* Layout */
+  .app-container {
+    display: flex;
+    min-height: 100vh;
   }
 
-  @media (min-width: 640px) {
-    .bento-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.25rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .bento-grid {
-      grid-template-columns: repeat(3, 1fr);
-      grid-auto-rows: minmax(180px, auto);
-      grid-auto-flow: dense;
-      gap: 1.25rem;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .bento-grid {
-      grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: minmax(180px, auto);
-      gap: 1.5rem;
-    }
+  .main-content {
+    flex: 1;
+    min-width: 0;
   }
 
   .glass-card {
-    @apply backdrop-blur-2xl bg-surface-card border border-surface-border rounded-[2.5rem] transition-all duration-300 shadow-card;
+    @apply bg-white border border-slate-200 rounded-3xl transition-all duration-300 shadow-card;
   }
 
   .glass-card:hover {
-    @apply shadow-card-hover;
-    border-color: rgba(255, 255, 255, 0.2);
-    background-color: theme('colors.surface.hover');
-  }
-
-  .status-border {
-    border-left-width: 4px;
-    border-left-style: solid;
-  }
-
-  .status-border-not-started {
-    border-left-color: theme('colors.neutral.DEFAULT');
-  }
-
-  .status-border-in-progress {
-    border-left-color: theme('colors.warning.DEFAULT');
-  }
-
-  .status-border-confident {
-    border-left-color: theme('colors.success.DEFAULT');
+    @apply shadow-card-hover border-slate-300;
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-success;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark;
   }
 
-  /* Radial Glows */
-  .glow-radial-top {
-    position: fixed;
-    top: -150px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
-    filter: blur(100px);
-    z-index: -1;
-    pointer-events: none;
+  .progress-bar-container {
+    @apply w-full h-1.5 bg-slate-100 rounded-full overflow-hidden;
   }
 
-  .glow-radial-bottom {
-    position: fixed;
-    bottom: -150px;
-    right: -150px;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(34, 197, 94, 0.08) 0%, transparent 60%);
-    filter: blur(100px);
-    z-index: -1;
-    pointer-events: none;
+  .progress-bar-fill {
+    @apply h-full transition-all duration-500 ease-out;
   }
 }

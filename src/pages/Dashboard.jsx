@@ -42,70 +42,69 @@ export default function Dashboard() {
     const orderedSubjects = [...subjects].sort((a, b) => optimalGridOrder.indexOf(a.id) - optimalGridOrder.indexOf(b.id));
 
     return (
-        <div className="relative min-h-screen">
-            {/* Radial Glows */}
-            <div className="glow-radial-top" />
-            <div className="glow-radial-bottom" />
-
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12 relative z-10 pb-24">
-                {/* Hero Section */}
-                <section className="flex flex-col items-center text-center mb-16 sm:mb-24 lg:mb-32">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8, ease: 'easeOut', type: 'spring', bounce: 0.4 }}
-                        className="mb-8 sm:mb-12 relative transform scale-75 sm:scale-100 origin-center"
-                    >
-                        {/* New Advanced Hero Visualization */}
-                        <HeroProgress
-                            percentage={overall}
-                            totalTopics={totalTopics}
-                            completedTopics={completedTopics}
-                        />
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
-                        className="max-w-3xl px-4"
-                    >
-                        <h1 className="text-4xl sm:text-5xl md:text-[56px] lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/60 mb-4 sm:mb-6 tracking-tight leading-tight">
-                            Command Your <br className="sm:hidden" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-success drop-shadow-sm">GATE Journey</span>
-                        </h1>
-                        <p className="text-slate-400 font-semibold uppercase tracking-[0.2em] text-xs sm:text-sm bg-surface-card border border-surface-border inline-block px-6 py-2 rounded-full shadow-sm backdrop-blur-md">
-                            {today} <span className="mx-3 text-slate-600">|</span> GATE 2027 <span className="mx-3 text-slate-600">|</span> CSE
-                        </p>
-                        <div className="mt-4">
-                            <Countdown />
+        <div className="animate-in fade-in duration-700">
+            {/* Hero Section */}
+            <section className="bg-white rounded-[2.5rem] p-12 mb-12 border border-slate-100 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-12">
+                <div className="max-w-xl">
+                    <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 mb-4 leading-tight">
+                        Welcome back, <br />
+                        <span className="text-primary italic">Scholar</span>
+                    </h1>
+                    <p className="text-slate-500 text-lg mb-8 font-medium">
+                        Consistency is the key to mastering Computer Science. Your current pace is <span className="text-emerald-600 font-bold">24% faster</span> than last week.
+                    </p>
+                    <div className="flex flex-wrap gap-4">
+                        <div className="bg-slate-50 rounded-2xl p-4 flex-1 min-w-[200px] border border-slate-100">
+                            <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Target</span>
+                            <span className="text-xl font-bold text-slate-700 underline decoration-primary decoration-4 underline-offset-4 cursor-default">GATE 2027 Examination</span>
                         </div>
-                    </motion.div>
-                </section>
-
-                {/* Symmetrical Bento Grid */}
-                <div className="bento-grid">
-                    {orderedSubjects.map((subject, index) => (
-                        <SubjectCard
-                            key={subject.id}
-                            subject={subject}
-                            progress={getSubjectProgress(subject.id)}
-                            index={index}
-                            className={getCardClass(subject.id)}
-                        />
-                    ))}
+                        <div className="bg-slate-50 rounded-2xl p-4 flex-1 min-w-[200px] border border-slate-100">
+                            <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Time Remaining</span>
+                            <div className="flex items-center gap-2">
+                                <Countdown />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Footer tagline */}
-                <motion.div
-                    className="text-center mt-24"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1 }}
-                >
-                    <p className="text-xs text-slate-700 font-medium">GATEflow · Crafted for Excellence</p>
-                </motion.div>
-            </main>
+                <div className="relative">
+                    <HeroProgress
+                        percentage={overall}
+                        totalTopics={totalTopics}
+                        completedTopics={completedTopics}
+                    />
+                </div>
+            </section>
+
+            {/* Subject Grid Header */}
+            <div className="flex items-center justify-between mb-8 px-2">
+                <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Your Subjects</h2>
+                <button className="text-sm font-bold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 group">
+                    View All Subjects <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </button>
+            </div>
+
+            {/* Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-1">
+                {subjects.map((subject, index) => (
+                    <SubjectCard
+                        key={subject.id}
+                        subject={subject}
+                        progress={getSubjectProgress(subject.id)}
+                        index={index}
+                    />
+                ))}
+            </div>
+
+            {/* Footer tagline */}
+            <motion.div
+                className="text-center mt-24"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+            >
+                <p className="text-xs text-slate-400 font-medium">GATEflow · Crafted for Excellence · 2027 Aspirant Portal</p>
+            </motion.div>
         </div>
     );
 }
