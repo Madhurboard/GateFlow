@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 import { subjects } from '../data';
 import { useProgress } from '../hooks/useProgress';
-import TopicRow from '../components/TopicRow';
 
 export default function SubjectDetail() {
     const { id } = useParams();
@@ -11,40 +11,46 @@ export default function SubjectDetail() {
 
     const subject = subjects.find((s) => s.id === id);
 
-    // Handle not found
     if (!subject) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="flex items-center justify-center py-32">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold text-white mb-4">Subject Not Found</h2>
+                    <h2 className="text-2xl font-bold text-slate-800 mb-4">Subject Not Found</h2>
                     <button
                         onClick={() => navigate('/')}
-                        className="text-primary hover:text-white transition-colors"
+                        className="text-primary hover:underline font-semibold"
                     >
-                        Go Home
+                        ← Go Home
                     </button>
                 </div>
             </div>
-        )
+        );
     }
 
     const progress = getSubjectProgress(subject.id);
 
     return (
-        <div className="animate-in fade-in duration-700">
-            {/* Header / Breadcrumb area */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-8"
+        >
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <button
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate(-1)}
                         className="text-primary font-bold text-sm mb-4 flex items-center gap-2 hover:gap-3 transition-all"
                     >
-                        ← Back to Dashboard
+                        <ArrowLeft size={16} /> Back
                     </button>
                     <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight flex items-center gap-4">
                         <span className="text-5xl">{subject.icon}</span>
-                        {subject.name}
+                        {subject.name.replace('\n', ' ')}
                     </h1>
+                    <p className="text-slate-500 mt-2">
+                        {subject.topics.length} topics · {subject.topics.reduce((a, t) => a + t.subtopics.length, 0)} subtopics
+                    </p>
                 </div>
 
                 <div className="glass-card p-6 flex flex-col items-center justify-center min-w-[200px]">
@@ -52,71 +58,156 @@ export default function SubjectDetail() {
                         {progress.percentage}%
                     </div>
                     <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Subject Mastery</div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full mt-3 overflow-hidden">
+                        <div
+                            className="h-full bg-primary rounded-full transition-all duration-500"
+                            style={{ width: `${progress.percentage}%` }}
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                {/* Main Topics List */}
-                <div className="lg:col-span-2 space-y-4">
-                    <h2 className="text-xl font-bold text-slate-800 mb-6 px-2">Syllabus Progress</h2>
-                    <div className="space-y-4">
-                        {subject.topics.map((topic) => (
-                            <TopicRow
+            {/* Topics */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-3">
+                    <h2 className="text-xl font-bold text-slate-800 mb-4">Syllabus Progress</h2>
+                    {subject.topics.map((topic, i) => {
+                        const topicState = getTopicState(topic.id);
+                        const completedSubs = topic.subtopics.filter(s => getSubtopicState(s.id)).length;
+                        return (
+                            <TopicAccordion
                                 key={topic.id}
                                 topic={topic}
-                                progress={progress.topics[topic.id] || { status: 'not_started', subtopics: [] }}
-                                onToggleSubtopic={(subtopicId) => toggleSubtopic(subject.id, topic.id, subtopicId)}
+                                topicState={topicState}
+                                completedSubs={completedSubs}
+                                onCycleTopic={() => cycleTopicState(topic.id)}
+                                getSubtopicState={getSubtopicState}
+                                toggleSubtopicState={toggleSubtopicState}
+                                index={i}
                             />
-                        ))}
-                    </div>
+                        );
+                    })}
                 </div>
 
-                {/* Sidebar Column: Resources & Insights */}
+                {/* Sidebar */}
                 <div className="space-y-6">
-                    <div className="glass-card p-8 bg-slate-50/50">
-                        <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                            <span className="text-primary">⚡</span> Key Insights
+                    <div className="glass-card p-6">
+                        <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <span className="text-primary">⚡</span> Quick Stats
                         </h3>
-                        <div className="space-y-6">
-                            <div className="flex gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-primary-light flex-shrink-0 flex items-center justify-center text-primary">
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Topic Analysis</p>
-                                    <p className="text-sm text-slate-600 font-medium leading-relaxed">Focus more on <span className="text-slate-900 border-b-2 border-primary-light">Deadlocks</span> - historically 15% of GATE questions.</p>
-                                </div>
-                            </div>
-
-                            <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm">
-                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Mastery Checklist</p>
-                                <ul className="space-y-3">
-                                    {[
-                                        'Standard Formulae',
-                                        'Previous Year Questions',
-                                        'Short Notes Generated'
-                                    ].map((item, i) => (
-                                        <li key={i} className="flex items-center gap-2 text-sm text-slate-600 font-medium">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                        <div className="space-y-4">
+                            <StatRow label="Mastered" value={progress.completed} total={progress.total} color="text-emerald-600" />
+                            <StatRow label="In Progress" value={progress.inProgress} total={progress.total} color="text-amber-600" />
+                            <StatRow label="Not Started" value={progress.total - progress.completed - progress.inProgress} total={progress.total} color="text-slate-400" />
                         </div>
                     </div>
 
-                    <div className="glass-card p-8 bg-primary">
+                    <div className="glass-card p-6 bg-primary">
                         <h3 className="text-white font-bold mb-2">Practice Mode</h3>
-                        <p className="text-white/70 text-sm mb-6">Test your knowledge with 50+ handpicked PYQs.</p>
-                        <button className="w-full py-3 bg-white text-primary font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-lg">
+                        <p className="text-white/70 text-sm mb-4">Test your knowledge with handpicked PYQs.</p>
+                        <button
+                            onClick={() => navigate('/practice')}
+                            className="w-full py-3 bg-white text-primary font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-lg"
+                        >
                             Start Quiz
                         </button>
                     </div>
                 </div>
             </div>
+        </motion.div>
+    );
+}
+
+function StatRow({ label, value, total, color }) {
+    return (
+        <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-600">{label}</span>
+            <span className={`text-sm font-bold ${color}`}>{value} / {total}</span>
         </div>
+    );
+}
+
+// Inline accordion component — much simpler, uses useProgress directly
+import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import { ChevronDown, Check } from 'lucide-react';
+
+const statusConfig = {
+    not_started: { bg: 'bg-slate-50', dot: 'bg-slate-200', color: 'text-slate-400', label: 'Not Started' },
+    in_progress: { bg: 'bg-amber-50', dot: 'bg-amber-400', color: 'text-amber-600', label: 'In Progress' },
+    confident: { bg: 'bg-emerald-50', dot: 'bg-emerald-500', color: 'text-emerald-700', label: 'Mastered' },
+};
+
+function TopicAccordion({ topic, topicState, completedSubs, onCycleTopic, getSubtopicState, toggleSubtopicState, index }) {
+    const [open, setOpen] = useState(false);
+    const cfg = statusConfig[topicState];
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.04 }}
+            className="glass-card overflow-hidden"
+        >
+            <div
+                className={`p-5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition-colors ${open ? 'bg-slate-50/50' : ''}`}
+                onClick={() => setOpen(!open)}
+            >
+                <div className="flex items-center gap-4">
+                    <div className={`w-2.5 h-2.5 rounded-full ${cfg.dot}`} />
+                    <div>
+                        <h4 className="text-[15px] font-bold text-slate-800">{topic.name}</h4>
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                            {completedSubs} / {topic.subtopics.length} subtopics done
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onCycleTopic(); }}
+                        className={`px-2.5 py-1 rounded-lg ${cfg.bg} border border-black/5`}
+                    >
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${cfg.color}`}>
+                            {cfg.label}
+                        </span>
+                    </button>
+                    <motion.div animate={{ rotate: open ? 180 : 0 }} className="text-slate-300">
+                        <ChevronDown size={18} />
+                    </motion.div>
+                </div>
+            </div>
+
+            <AnimatePresence>
+                {open && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                    >
+                        <div className="px-5 pb-5 pt-1 space-y-1">
+                            {topic.subtopics.map((sub) => {
+                                const checked = getSubtopicState(sub.id);
+                                return (
+                                    <div
+                                        key={sub.id}
+                                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-all cursor-pointer group"
+                                        onClick={() => toggleSubtopicState(sub.id)}
+                                    >
+                                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${checked ? 'bg-primary border-primary' : 'border-slate-200 group-hover:border-slate-300'
+                                            }`}>
+                                            {checked && <Check size={14} className="text-white stroke-[3px]" />}
+                                        </div>
+                                        <span className={`text-sm font-medium ${checked ? 'text-slate-400 line-through' : 'text-slate-600'}`}>
+                                            {sub.name}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
     );
 }

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { subjects } from '../data';
 import { useProgress } from '../hooks/useProgress';
 import HeroProgress from '../components/HeroProgress';
@@ -8,6 +9,7 @@ import Countdown from '../components/Countdown';
 export default function Dashboard() {
     const { getOverallProgress, getSubjectProgress, hasAnyProgress } = useProgress();
     const overall = getOverallProgress();
+    const navigate = useNavigate();
 
     // Calculate total and completed topics across all subjects
     const totalTopics = subjects.reduce((acc, curr) => acc + curr.topics.length, 0);
@@ -79,10 +81,14 @@ export default function Dashboard() {
             {/* Subject Grid Header */}
             <div className="flex items-center justify-between mb-8 px-2">
                 <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Your Subjects</h2>
-                <button className="text-sm font-bold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 group">
+                <button
+                    onClick={() => navigate('/subjects')}
+                    className="text-sm font-bold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 group"
+                >
                     View All Subjects <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </button>
             </div>
+
 
             {/* Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-1">
