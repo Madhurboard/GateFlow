@@ -64,8 +64,8 @@ export default function Sidebar() {
                         key={item.id}
                         onClick={() => navigate(item.path)}
                         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group ${isActive(item.path)
-                                ? 'bg-primary-light text-primary font-semibold'
-                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                            ? 'bg-primary-light text-primary font-semibold'
+                            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
                             }`}
                     >
                         <item.icon size={20} strokeWidth={isActive(item.path) ? 2.5 : 2} />
@@ -82,6 +82,7 @@ export default function Sidebar() {
             {/* Footer */}
             <div className="p-4 border-t border-slate-100 space-y-2">
                 <button
+                    onClick={() => navigate('/settings')}
                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all group"
                 >
                     <Settings size={20} />

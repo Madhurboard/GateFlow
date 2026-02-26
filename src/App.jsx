@@ -4,6 +4,11 @@ import { useProgress } from './hooks/useProgress';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import SubjectDetail from './pages/SubjectDetail';
+import Subjects from './pages/Subjects';
+import Practice from './pages/Practice';
+import Planner from './pages/Planner';
+import Performance from './pages/Performance';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import AuthRoute from './components/AuthRoute';
@@ -44,10 +49,50 @@ function AnimatedRoutes() {
           </AuthRoute>
         } />
 
+        <Route path="/subjects" element={
+          <AuthRoute>
+            <Layout streak={getStreak()}>
+              <Subjects />
+            </Layout>
+          </AuthRoute>
+        } />
+
         <Route path="/subject/:id" element={
           <AuthRoute>
             <Layout streak={getStreak()}>
               <SubjectDetail />
+            </Layout>
+          </AuthRoute>
+        } />
+
+        <Route path="/practice" element={
+          <AuthRoute>
+            <Layout streak={getStreak()}>
+              <Practice />
+            </Layout>
+          </AuthRoute>
+        } />
+
+        <Route path="/planner" element={
+          <AuthRoute>
+            <Layout streak={getStreak()}>
+              <Planner />
+            </Layout>
+          </AuthRoute>
+        } />
+
+        <Route path="/performance" element={
+          <AuthRoute>
+            <Layout streak={getStreak()}>
+              <Performance />
+            </Layout>
+          </AuthRoute>
+        } />
+
+        <Route path="/settings" element={
+          <AuthRoute>
+            <Layout streak={getStreak()}>
+              <Settings />
             </Layout>
           </AuthRoute>
         } />
