@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Bell, Volume2, Mail, Calendar, Clock, Sun, Moon, Sunset, Shield, Download, Trash2, Info } from 'lucide-react';
+import { User, Bell, Volume2, Mail, Calendar, Clock, Sun, Moon, Sunset, Shield, Download, Trash2, Info, LogOut } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 function Toggle({ enabled, onToggle }) {
     return (
@@ -20,10 +22,17 @@ const timeChips = [
 ];
 
 export default function Settings() {
+    const { user, signOut } = useAuth();
+    const navigate = useNavigate();
     const [dailyReminders, setDailyReminders] = useState(true);
     const [emailNotifs, setEmailNotifs] = useState(false);
     const [soundFx, setSoundFx] = useState(true);
     const [preferredTime, setPreferredTime] = useState('Morning');
+
+    const handleSignOut = async () => {
+        await signOut();
+        navigate('/login');
+    };
 
     return (
         <motion.div
@@ -45,8 +54,8 @@ export default function Settings() {
                         <User size={28} />
                     </div>
                     <div className="flex-1">
-                        <p className="text-lg font-bold text-slate-800">Scholar</p>
-                        <p className="text-sm text-slate-400">test@example.com</p>
+                        <p className="text-lg font-bold text-slate-800">{user?.user_metadata?.full_name || 'Scholar'}</p>
+                        <p className="text-sm text-slate-400">{user?.email || 'Not signed in'}</p>
                     </div>
                     <button className="text-sm font-semibold text-primary border border-primary/20 px-4 py-2 rounded-xl hover:bg-primary/5 transition-colors">
                         Edit Profile
@@ -123,8 +132,8 @@ export default function Settings() {
                                     key={chip.label}
                                     onClick={() => setPreferredTime(chip.label)}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${preferredTime === chip.label
-                                            ? 'bg-primary text-white shadow-sm'
-                                            : 'bg-slate-50 text-slate-500 border border-slate-200 hover:border-slate-300'
+                                        ? 'bg-primary text-white shadow-sm'
+                                        : 'bg-slate-50 text-slate-500 border border-slate-200 hover:border-slate-300'
                                         }`}
                                 >
                                     <chip.icon size={16} />
@@ -148,6 +157,12 @@ export default function Settings() {
                     </button>
                     <button className="flex items-center gap-2 text-sm font-semibold text-red-500 border border-red-200 px-4 py-2.5 rounded-xl hover:bg-red-50 transition-colors">
                         <Trash2 size={16} /> Delete Account
+                    </button>
+                    <button
+                        onClick={handleSignOut}
+                        className="flex items-center gap-2 text-sm font-semibold text-white bg-red-500 px-5 py-2.5 rounded-xl hover:bg-red-600 transition-colors shadow-sm"
+                    >
+                        <LogOut size={16} /> Sign Out
                     </button>
                 </div>
             </div>

@@ -1,6 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Flame, Clock, Target, Check, X, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { supabase } from '../lib/supabase';
 
 const subjectOptions = ['OS', 'DBMS', 'CN', 'TOC', 'COA', 'Algorithms', 'Compiler Design', 'Eng. Math', 'PDS', 'Digital Logic', 'General Aptitude', 'Practice', 'Mock Test', 'Revision'];
 const colorOptions = [
@@ -47,12 +49,50 @@ function getWeekDates(offset = 0) {
 }
 
 export default function Planner() {
+    const { user } = useAuth();
     const [sessions, setSessions] = useState(defaultSessions);
     const [tasks, setTasks] = useState(defaultTasks);
     const [showModal, setShowModal] = useState(false);
     const [editingSession, setEditingSession] = useState(null);
     const [weekOffset, setWeekOffset] = useState(0);
     const [newTask, setNewTask] = useState('');
+    const [loaded, setLoaded] = useState(false);
+
+    // Load planner data from Supabase
+    useEffect(() => {
+        if (!user) return;
+        (async () => {
+            const { data } = await supabase
+                .from('user_data')
+                .select('planner_sessions, planner_tasks')
+                .eq('user_id', user.id)
+                .single();
+            if (data) {
+                if (data.planner_sessions?.length) setSessions(data.planner_sessions);
+                if (data.planner_tasks?.length) setTasks(data.planner_tasks);
+            }
+            setLoaded(true);
+        })();
+    }, [user]);
+
+    // Auto-save to Supabase when sessions or tasks change (after initial load)
+    const saveTimeout = useRef(null);
+    useEffect(() => {
+        if (!user || !loaded) return;
+        clearTimeout(saveTimeout.current);
+        saveTimeout.current = setTimeout(async () => {
+            const { data: existing } = await supabase
+                .from('user_data').select('id').eq('user_id', user.id).single();
+            if (existing) {
+                await supabase.from('user_data')
+                    .update({ planner_sessions: sessions, planner_tasks: tasks })
+                    .eq('user_id', user.id);
+            } else {
+                await supabase.from('user_data')
+                    .insert({ user_id: user.id, planner_sessions: sessions, planner_tasks: tasks });
+            }
+        }, 800); // debounce 800ms
+    }, [sessions, tasks, user, loaded]);
 
     const weekDays = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
     let nextId = Math.max(...sessions.map(s => s.id), ...tasks.map(t => t.id)) + 1;
