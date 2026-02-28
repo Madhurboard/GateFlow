@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useSettings } from '../hooks/useSettings';
 
 export default function Countdown() {
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+    const { settings } = useSettings();
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(settings.targetExamDate));
 
-    function calculateTimeLeft() {
-        const targetDate = new Date('2027-02-01T00:00:00');
+    function calculateTimeLeft(targetDateStr) {
+        const targetDate = new Date(targetDateStr || '2027-02-01T00:00:00');
         const difference = +targetDate - +new Date();
         let timeLeft = {
             days: 0,
@@ -27,11 +29,11 @@ export default function Countdown() {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setTimeLeft(calculateTimeLeft());
+            setTimeLeft(calculateTimeLeft(settings.targetExamDate));
         }, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [settings.targetExamDate]);
 
     return (
         <motion.div

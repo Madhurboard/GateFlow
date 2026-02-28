@@ -1,41 +1,65 @@
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Target, Award, Flame, AlertTriangle } from 'lucide-react';
 import { subjects } from '../data';
 import { useProgress } from '../hooks/useProgress';
+import { useQuiz } from '../hooks/useQuiz';
 
-const months = ['Nov', 'Dec', 'Jan'];
-const daysInMonth = [30, 31, 31];
-
-function generateHeatmapData() {
+function buildHeatmapData(streakDates) {
+    // Build a 90-day grid mapping dates to activity counts
+    const today = new Date();
     const data = [];
-    for (let m = 0; m < 3; m++) {
-        for (let d = 0; d < daysInMonth[m]; d++) {
-            data.push(Math.floor(Math.random() * 5));
-        }
+    const dateCountMap = {};
+
+    // Count occurrences of each date in streakDates
+    (streakDates || []).forEach(d => {
+        dateCountMap[d] = (dateCountMap[d] || 0) + 1;
+    });
+
+    for (let i = 89; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        const count = dateCountMap[dateStr] || 0;
+        // Normalize to 0-4 scale
+        const level = count === 0 ? 0 : Math.min(count, 4);
+        data.push({ date: dateStr, level });
     }
     return data;
 }
 
-const heatmapData = generateHeatmapData();
+function getMonthLabels(data) {
+    const labels = [];
+    let lastMonth = '';
+    data.forEach((d, i) => {
+        const month = new Date(d.date).toLocaleDateString('en-US', { month: 'short' });
+        if (month !== lastMonth) {
+            labels.push({ month, index: i });
+            lastMonth = month;
+        }
+    });
+    return labels;
+}
+
 const heatmapColors = ['bg-slate-100', 'bg-blue-100', 'bg-blue-200', 'bg-blue-400', 'bg-blue-600'];
 
-const weakTopics = [
-    { name: 'Instruction Pipelining', subject: 'COA', score: 35 },
-    { name: 'Pumping Lemma', subject: 'TOC', score: 40 },
-    { name: 'Normalization (BCNF)', subject: 'DBMS', score: 42 },
-    { name: 'Page Replacement', subject: 'OS', score: 45 },
-    { name: 'Dynamic Programming', subject: 'Algorithms', score: 48 },
-];
-
 export default function Performance() {
-    const { getSubjectProgress, getOverallProgress } = useProgress();
+    const { getSubjectProgress, getOverallProgress, getStreak, streakDates } = useProgress();
+    const { getAverageScore, getWeakTopics, getQuizCount } = useQuiz();
     const overall = getOverallProgress();
+    const streak = getStreak();
+    const avgScore = getAverageScore();
+    const weakTopics = getWeakTopics();
+    const quizCount = getQuizCount();
 
     const subjectData = subjects.map(s => ({
         name: s.name.replace('\n', ' '),
         icon: s.icon,
         ...getSubjectProgress(s.id),
     }));
+
+    const heatmapData = useMemo(() => buildHeatmapData(streakDates), [streakDates]);
+    const monthLabels = useMemo(() => getMonthLabels(heatmapData), [heatmapData]);
 
     return (
         <motion.div
@@ -54,8 +78,8 @@ export default function Performance() {
                 {[
                     { label: 'Overall Score', value: `${overall}%`, icon: TrendingUp, color: 'text-primary' },
                     { label: 'Topics Mastered', value: `${subjectData.reduce((a, s) => a + s.completed, 0)} / ${subjectData.reduce((a, s) => a + s.total, 0)}`, icon: Target, color: 'text-emerald-600' },
-                    { label: 'Avg Quiz Score', value: '72%', icon: Award, color: 'text-amber-500' },
-                    { label: 'Study Streak', value: '5 days', icon: Flame, color: 'text-red-500' },
+                    { label: 'Avg Quiz Score', value: quizCount > 0 ? `${avgScore}%` : '—', icon: Award, color: 'text-amber-500' },
+                    { label: 'Study Streak', value: `${streak} day${streak !== 1 ? 's' : ''}`, icon: Flame, color: 'text-red-500' },
                 ].map((stat, i) => (
                     <motion.div
                         key={stat.label}
@@ -98,15 +122,19 @@ export default function Performance() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Activity Heatmap */}
                 <div className="glass-card p-6">
-                    <h2 className="text-lg font-bold text-slate-800 mb-4">Study Activity</h2>
-                    <div className="flex gap-1 mb-3">
-                        {months.map(m => (
-                            <span key={m} className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex-1">{m}</span>
+                    <h2 className="text-lg font-bold text-slate-800 mb-4">Study Activity (Last 90 Days)</h2>
+                    <div className="flex gap-6 mb-3">
+                        {monthLabels.map(m => (
+                            <span key={m.month + m.index} className="text-[10px] font-black uppercase tracking-widest text-slate-400">{m.month}</span>
                         ))}
                     </div>
                     <div className="flex flex-wrap gap-[3px]">
                         {heatmapData.map((val, i) => (
-                            <div key={i} className={`w-3 h-3 rounded-sm ${heatmapColors[val]}`} title={`Activity level: ${val}`} />
+                            <div
+                                key={i}
+                                className={`w-3 h-3 rounded-sm ${heatmapColors[val.level]}`}
+                                title={`${val.date}: ${val.level > 0 ? 'Active' : 'No activity'}`}
+                            />
                         ))}
                     </div>
                     <div className="flex items-center gap-1.5 mt-4 justify-end">
@@ -124,22 +152,26 @@ export default function Performance() {
                         <AlertTriangle size={18} className="text-amber-500" />
                         <h2 className="text-lg font-bold text-slate-800">Weak Topics</h2>
                     </div>
-                    <div className="space-y-3">
-                        {weakTopics.map((topic, i) => (
-                            <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-700">{topic.name}</p>
-                                    <p className="text-[11px] text-slate-400 font-semibold">{topic.subject}</p>
+                    {weakTopics.length === 0 ? (
+                        <div className="text-center py-8">
+                            <p className="text-slate-400 font-semibold mb-1">No weak topics identified</p>
+                            <p className="text-sm text-slate-300">Take some quizzes to see which topics need work!</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {weakTopics.map((topic, i) => (
+                                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
+                                    <div>
+                                        <p className="text-sm font-semibold text-slate-700">{topic.topicName}</p>
+                                        <p className="text-[11px] text-slate-400 font-semibold">{topic.subjectName}</p>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-sm font-bold text-red-500">{topic.score}%</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-sm font-bold text-red-500">{topic.score}%</span>
-                                    <button className="text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary px-2.5 py-1 rounded-lg hover:bg-primary/20 transition-colors">
-                                        Retry
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </motion.div>

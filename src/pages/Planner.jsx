@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Flame, Clock, Target, Check, X, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
-import { supabase } from '../lib/supabase';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useProgress } from '../hooks/useProgress';
 
 const subjectOptions = ['OS', 'DBMS', 'CN', 'TOC', 'COA', 'Algorithms', 'Compiler Design', 'Eng. Math', 'PDS', 'Digital Logic', 'General Aptitude', 'Practice', 'Mock Test', 'Revision'];
 const colorOptions = [
@@ -27,7 +27,7 @@ const defaultSessions = [
 ];
 
 const defaultTasks = [
-    { id: 1, text: 'Complete Graph Theory revision', done: true },
+    { id: 1, text: 'Complete Graph Theory revision', done: false },
     { id: 2, text: 'Practice 10 MCQs on Algorithms', done: false },
     { id: 3, text: 'Revise Normalization (BCNF)', done: false },
     { id: 4, text: 'Watch OS: Deadlocks lecture', done: false },
@@ -49,53 +49,16 @@ function getWeekDates(offset = 0) {
 }
 
 export default function Planner() {
-    const { user } = useAuth();
-    const [sessions, setSessions] = useState(defaultSessions);
-    const [tasks, setTasks] = useState(defaultTasks);
+    const [sessions, setSessions] = useLocalStorage('gateflow_planner_sessions', defaultSessions);
+    const [tasks, setTasks] = useLocalStorage('gateflow_planner_tasks', defaultTasks);
     const [showModal, setShowModal] = useState(false);
     const [editingSession, setEditingSession] = useState(null);
     const [weekOffset, setWeekOffset] = useState(0);
     const [newTask, setNewTask] = useState('');
-    const [loaded, setLoaded] = useState(false);
-
-    // Load planner data from Supabase
-    useEffect(() => {
-        if (!user) return;
-        (async () => {
-            const { data } = await supabase
-                .from('user_data')
-                .select('planner_sessions, planner_tasks')
-                .eq('user_id', user.id)
-                .single();
-            if (data) {
-                if (data.planner_sessions?.length) setSessions(data.planner_sessions);
-                if (data.planner_tasks?.length) setTasks(data.planner_tasks);
-            }
-            setLoaded(true);
-        })();
-    }, [user]);
-
-    // Auto-save to Supabase when sessions or tasks change (after initial load)
-    const saveTimeout = useRef(null);
-    useEffect(() => {
-        if (!user || !loaded) return;
-        clearTimeout(saveTimeout.current);
-        saveTimeout.current = setTimeout(async () => {
-            const { data: existing } = await supabase
-                .from('user_data').select('id').eq('user_id', user.id).single();
-            if (existing) {
-                await supabase.from('user_data')
-                    .update({ planner_sessions: sessions, planner_tasks: tasks })
-                    .eq('user_id', user.id);
-            } else {
-                await supabase.from('user_data')
-                    .insert({ user_id: user.id, planner_sessions: sessions, planner_tasks: tasks });
-            }
-        }, 800); // debounce 800ms
-    }, [sessions, tasks, user, loaded]);
+    const { getStreak } = useProgress();
 
     const weekDays = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
-    let nextId = Math.max(...sessions.map(s => s.id), ...tasks.map(t => t.id)) + 1;
+    let nextId = Math.max(...sessions.map(s => s.id), ...tasks.map(t => t.id), 0) + 1;
 
     const toggleTask = (id) => {
         setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
@@ -141,6 +104,8 @@ export default function Planner() {
         return a + (match ? parseFloat(match[1]) : 0);
     }, 0);
 
+    const streak = getStreak();
+
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             {/* Header */}
@@ -159,7 +124,7 @@ export default function Planner() {
                 {[
                     { label: 'This Week', value: `${totalHours} hrs`, icon: Clock, color: 'text-primary' },
                     { label: 'Daily Average', value: `${(totalHours / 7).toFixed(1)} hrs`, icon: Target, color: 'text-emerald-600' },
-                    { label: 'Streak', value: '5 days', icon: Flame, color: 'text-amber-500' },
+                    { label: 'Streak', value: `${streak} day${streak !== 1 ? 's' : ''}`, icon: Flame, color: 'text-amber-500' },
                 ].map((stat, i) => (
                     <div key={stat.label} className="glass-card p-4 flex items-center gap-3">
                         <div className={`w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center ${stat.color}`}>

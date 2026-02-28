@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Bell, Volume2, Mail, Calendar, Clock, Sun, Moon, Sunset, Shield, Download, Trash2, Info, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useSettings } from '../hooks/useSettings';
 
 function Toggle({ enabled, onToggle }) {
     return (
@@ -24,15 +25,17 @@ const timeChips = [
 export default function Settings() {
     const { user, signOut } = useAuth();
     const navigate = useNavigate();
-    const [dailyReminders, setDailyReminders] = useState(true);
-    const [emailNotifs, setEmailNotifs] = useState(false);
-    const [soundFx, setSoundFx] = useState(true);
-    const [preferredTime, setPreferredTime] = useState('Morning');
+    const { settings, updateSetting } = useSettings();
 
     const handleSignOut = async () => {
         await signOut();
         navigate('/login');
     };
+
+    // Format the target date for the date input
+    const targetDateValue = settings.targetExamDate
+        ? new Date(settings.targetExamDate).toISOString().split('T')[0]
+        : '2027-02-01';
 
     return (
         <motion.div
@@ -55,11 +58,8 @@ export default function Settings() {
                     </div>
                     <div className="flex-1">
                         <p className="text-lg font-bold text-slate-800">{user?.user_metadata?.full_name || 'Scholar'}</p>
-                        <p className="text-sm text-slate-400">{user?.email || 'Not signed in'}</p>
+                        <p className="text-sm text-slate-400">{user?.email || 'Guest Mode'}</p>
                     </div>
-                    <button className="text-sm font-semibold text-primary border border-primary/20 px-4 py-2 rounded-xl hover:bg-primary/5 transition-colors">
-                        Edit Profile
-                    </button>
                 </div>
             </div>
 
@@ -68,9 +68,9 @@ export default function Settings() {
                 <h2 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-5">Notifications</h2>
                 <div className="space-y-5">
                     {[
-                        { label: 'Daily Reminders', desc: 'Get notified about your daily study goals', icon: Bell, enabled: dailyReminders, toggle: () => setDailyReminders(!dailyReminders) },
-                        { label: 'Email Notifications', desc: 'Receive weekly progress reports via email', icon: Mail, enabled: emailNotifs, toggle: () => setEmailNotifs(!emailNotifs) },
-                        { label: 'Sound Effects', desc: 'Play sounds on task completion', icon: Volume2, enabled: soundFx, toggle: () => setSoundFx(!soundFx) },
+                        { label: 'Daily Reminders', desc: 'Get notified about your daily study goals', icon: Bell, key: 'dailyReminders' },
+                        { label: 'Email Notifications', desc: 'Receive weekly progress reports via email', icon: Mail, key: 'emailNotifs' },
+                        { label: 'Sound Effects', desc: 'Play sounds on task completion', icon: Volume2, key: 'soundFx' },
                     ].map((item, i) => (
                         <div key={i} className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export default function Settings() {
                                     <p className="text-xs text-slate-400">{item.desc}</p>
                                 </div>
                             </div>
-                            <Toggle enabled={item.enabled} onToggle={item.toggle} />
+                            <Toggle enabled={settings[item.key]} onToggle={() => updateSetting(item.key, !settings[item.key])} />
                         </div>
                     ))}
                 </div>
@@ -99,10 +99,15 @@ export default function Settings() {
                             </div>
                             <div>
                                 <p className="text-sm font-semibold text-slate-700">Target Exam Date</p>
-                                <p className="text-xs text-slate-400">GATE 2027 Examination</p>
+                                <p className="text-xs text-slate-400">Change your GATE exam target date</p>
                             </div>
                         </div>
-                        <span className="text-sm font-bold text-primary">Feb 2027</span>
+                        <input
+                            type="date"
+                            value={targetDateValue}
+                            onChange={e => updateSetting('targetExamDate', new Date(e.target.value).toISOString())}
+                            className="text-sm font-bold text-primary bg-primary/5 border border-primary/20 px-3 py-1.5 rounded-lg outline-none focus:ring-2 focus:ring-primary/30"
+                        />
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -115,12 +120,16 @@ export default function Settings() {
                                 <p className="text-xs text-slate-400">Set your target hours per day</p>
                             </div>
                         </div>
-                        <select className="text-sm font-bold text-primary bg-primary/5 border border-primary/20 px-3 py-1.5 rounded-lg outline-none">
-                            <option>1 hr</option>
-                            <option>2 hrs</option>
-                            <option selected>3 hrs</option>
-                            <option>4 hrs</option>
-                            <option>5 hrs</option>
+                        <select
+                            value={settings.dailyGoalHours}
+                            onChange={e => updateSetting('dailyGoalHours', Number(e.target.value))}
+                            className="text-sm font-bold text-primary bg-primary/5 border border-primary/20 px-3 py-1.5 rounded-lg outline-none"
+                        >
+                            <option value={1}>1 hr</option>
+                            <option value={2}>2 hrs</option>
+                            <option value={3}>3 hrs</option>
+                            <option value={4}>4 hrs</option>
+                            <option value={5}>5 hrs</option>
                         </select>
                     </div>
 
@@ -130,8 +139,8 @@ export default function Settings() {
                             {timeChips.map(chip => (
                                 <button
                                     key={chip.label}
-                                    onClick={() => setPreferredTime(chip.label)}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${preferredTime === chip.label
+                                    onClick={() => updateSetting('preferredTime', chip.label)}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${settings.preferredTime === chip.label
                                         ? 'bg-primary text-white shadow-sm'
                                         : 'bg-slate-50 text-slate-500 border border-slate-200 hover:border-slate-300'
                                         }`}
@@ -149,15 +158,6 @@ export default function Settings() {
             <div className="glass-card p-6">
                 <h2 className="text-sm font-black uppercase tracking-widest text-slate-400 mb-5">Account</h2>
                 <div className="flex flex-wrap gap-3">
-                    <button className="flex items-center gap-2 text-sm font-semibold text-slate-600 border border-slate-200 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-                        <Shield size={16} /> Change Password
-                    </button>
-                    <button className="flex items-center gap-2 text-sm font-semibold text-slate-600 border border-slate-200 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-                        <Download size={16} /> Export Data
-                    </button>
-                    <button className="flex items-center gap-2 text-sm font-semibold text-red-500 border border-red-200 px-4 py-2.5 rounded-xl hover:bg-red-50 transition-colors">
-                        <Trash2 size={16} /> Delete Account
-                    </button>
                     <button
                         onClick={handleSignOut}
                         className="flex items-center gap-2 text-sm font-semibold text-white bg-red-500 px-5 py-2.5 rounded-xl hover:bg-red-600 transition-colors shadow-sm"

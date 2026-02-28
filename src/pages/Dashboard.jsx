@@ -53,7 +53,16 @@ export default function Dashboard() {
                         <span className="text-primary italic">Scholar</span>
                     </h1>
                     <p className="text-slate-500 text-lg mb-8 font-medium">
-                        Consistency is the key to mastering Computer Science. Your current pace is <span className="text-emerald-600 font-bold">24% faster</span> than last week.
+                        {overall === 0
+                            ? 'Start your journey — mark topics as you study them!'
+                            : overall < 25
+                                ? <span>Good start! You've covered <span className="text-emerald-600 font-bold">{overall}%</span> of the syllabus. Keep going!</span>
+                                : overall < 50
+                                    ? <span>Solid progress — <span className="text-emerald-600 font-bold">{overall}%</span> done. Consistency is key!</span>
+                                    : overall < 75
+                                        ? <span>More than halfway! <span className="text-emerald-600 font-bold">{overall}%</span> mastered. You're on track!</span>
+                                        : <span>Almost there! <span className="text-emerald-600 font-bold">{overall}%</span> mastered. The finish line is near!</span>
+                        }
                     </p>
                     <div className="flex flex-wrap gap-4">
                         <div className="bg-slate-50 rounded-2xl p-4 flex-1 min-w-[200px] border border-slate-100">

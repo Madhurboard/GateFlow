@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { subjects } from '../data';
-import { supabase } from '../lib/supabase';
-import { useAuth } from './useAuth';
+import { useLocalStorage } from './useLocalStorage';
 
 function getToday() {
   return new Date().toISOString().split('T')[0];
@@ -32,58 +31,8 @@ function calculateStreak(dates) {
 const STATES = ['not_started', 'in_progress', 'confident'];
 
 export function useProgress() {
-  const { user } = useAuth();
-  const [progress, setProgress] = useState({});
-  const [streakDates, setStreakDates] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Load data from Supabase on mount or authentication change
-  useEffect(() => {
-    async function loadData() {
-      if (!user) {
-        setProgress({});
-        setStreakDates([]);
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('user_data')
-        .select('progress, streak_dates')
-        .eq('user_id', user.id)
-        .single();
-
-      if (!error && data) {
-        setProgress(data.progress || {});
-        setStreakDates(data.streak_dates || []);
-      }
-      setLoading(false);
-    }
-    loadData();
-  }, [user]);
-
-  // Generic function to save data to Supabase
-  const saveToSupabase = async (newProgress, newStreak) => {
-    if (!user) return;
-    
-    // Check if user_data row exists
-    const { data: existing } = await supabase
-      .from('user_data')
-      .select('id')
-      .eq('user_id', user.id)
-      .single();
-
-    if (existing) {
-      await supabase
-        .from('user_data')
-        .update({ progress: newProgress, streak_dates: newStreak })
-        .eq('user_id', user.id);
-    } else {
-      await supabase
-        .from('user_data')
-        .insert({ user_id: user.id, progress: newProgress, streak_dates: newStreak });
-    }
-  };
+  const [progress, setProgress] = useLocalStorage('gateflow_progress', {});
+  const [streakDates, setStreakDates] = useLocalStorage('gateflow_streak_dates', []);
 
   const getTopicState = useCallback(
     (topicId) => progress[topicId] || 'not_started',
@@ -96,18 +45,15 @@ export function useProgress() {
       const idx = STATES.indexOf(current);
       const next = STATES[(idx + 1) % STATES.length];
       const newProgress = { ...prev, [topicId]: next };
-      
-      // Update streak inline
-      setStreakDates((prevStreak) => {
-        const today = getToday();
-        const newStreak = prevStreak.includes(today) ? prevStreak : [...prevStreak, today];
-        saveToSupabase(newProgress, newStreak); // Async background save
-        return newStreak;
-      });
-
       return newProgress;
     });
-  }, [user]);
+
+    // Update streak
+    setStreakDates((prevStreak) => {
+      const today = getToday();
+      return prevStreak.includes(today) ? prevStreak : [...prevStreak, today];
+    });
+  }, [setProgress, setStreakDates]);
 
   const getSubtopicState = useCallback(
     (subtopicId) => progress[subtopicId] === 'confident',
@@ -117,23 +63,18 @@ export function useProgress() {
   const toggleSubtopicState = useCallback((subtopicId) => {
     setProgress((prev) => {
       const current = prev[subtopicId] === 'confident';
-      const newProgress = { ...prev, [subtopicId]: current ? 'not_started' : 'confident' };
-      
-      // Update streak inline
-      setStreakDates((prevStreak) => {
-        const today = getToday();
-        const newStreak = prevStreak.includes(today) ? prevStreak : [...prevStreak, today];
-        saveToSupabase(newProgress, newStreak); // Async background save
-        return newStreak;
-      });
-
-      return newProgress;
+      return { ...prev, [subtopicId]: current ? 'not_started' : 'confident' };
     });
-  }, [user]);
+
+    // Update streak
+    setStreakDates((prevStreak) => {
+      const today = getToday();
+      return prevStreak.includes(today) ? prevStreak : [...prevStreak, today];
+    });
+  }, [setProgress, setStreakDates]);
 
   const getSubjectProgress = useCallback(
     (subjectId) => {
-      if (loading) return { completed: 0, total: 0, percentage: 0, status: 'not_started', inProgress: 0 };
       const subject = subjects.find((s) => s.id === subjectId);
       if (!subject) return { completed: 0, total: 0, percentage: 0, status: 'not_started', inProgress: 0 };
 
@@ -153,11 +94,10 @@ export function useProgress() {
 
       return { completed: confident, total, percentage, status, inProgress };
     },
-    [progress, loading]
+    [progress]
   );
 
   const getOverallProgress = useCallback(() => {
-    if (loading) return 0;
     const allTopics = subjects.flatMap((s) => s.topics);
     const total = allTopics.length;
     if (total === 0) return 0;
@@ -165,7 +105,7 @@ export function useProgress() {
         (t) => progress[t.id] === 'confident'
     ).length;
     return Math.round((confident / total) * 100);
-  }, [progress, loading]);
+  }, [progress]);
 
   const getStreak = useCallback(() => {
     return calculateStreak(streakDates);
@@ -186,6 +126,7 @@ export function useProgress() {
     getOverallProgress,
     getStreak,
     hasAnyProgress,
-    loading
+    streakDates,
+    loading: false,
   };
 }

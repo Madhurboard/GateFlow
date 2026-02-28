@@ -1,6 +1,7 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { BookOpen, Clock, FileText, ChevronRight, Award } from 'lucide-react';
+import { useQuiz } from '../hooks/useQuiz';
 
 const quizModes = [
     {
@@ -9,32 +10,48 @@ const quizModes = [
         icon: BookOpen,
         color: 'bg-blue-50 text-primary',
         badge: '10 Qs',
+        link: '/practice/quiz?type=topic',
     },
     {
         title: 'Full Mock Test',
-        desc: 'Simulate real GATE: 65 questions across all subjects, 3 hours.',
+        desc: 'Simulate real GATE: 30 questions across all subjects.',
         icon: Clock,
         color: 'bg-amber-50 text-amber-600',
-        badge: '3 Hrs',
+        badge: '30 Qs',
+        link: '/practice/quiz?type=mock',
     },
     {
-        title: 'Previous Year Papers',
-        desc: 'Practice with real GATE papers from 2022-2024.',
+        title: 'Quick Challenge',
+        desc: 'Random 10 questions from any subject. Test your breadth!',
         icon: FileText,
         color: 'bg-emerald-50 text-emerald-600',
-        badge: '3 Papers',
+        badge: 'Random',
+        link: '/practice/quiz?type=mock',
     },
 ];
 
-const recentAttempts = [
-    { date: 'Feb 25, 2026', type: 'Topic Quiz', subject: 'Operating Systems', score: '8/10', time: '12 min', percent: 80 },
-    { date: 'Feb 24, 2026', type: 'Mock Test', subject: 'All Subjects', score: '48/65', time: '2h 45m', percent: 74 },
-    { date: 'Feb 23, 2026', type: 'Topic Quiz', subject: 'Algorithms', score: '7/10', time: '15 min', percent: 70 },
-    { date: 'Feb 22, 2026', type: 'PYQ 2024', subject: 'All Subjects', score: '42/65', time: '2h 50m', percent: 65 },
-    { date: 'Feb 21, 2026', type: 'Topic Quiz', subject: 'DBMS', score: '9/10', time: '10 min', percent: 90 },
-];
+function formatDate(isoString) {
+    const d = new Date(isoString);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function formatTime(seconds) {
+    if (!seconds) return '—';
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    if (m >= 60) {
+        const h = Math.floor(m / 60);
+        const rm = m % 60;
+        return `${h}h ${rm}m`;
+    }
+    return `${m} min`;
+}
 
 export default function Practice() {
+    const navigate = useNavigate();
+    const { getAttemptHistory } = useQuiz();
+    const recentAttempts = getAttemptHistory(10);
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -48,7 +65,7 @@ export default function Practice() {
                     <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Practice Mode</h1>
                 </div>
                 <p className="text-slate-500 max-w-xl">
-                    Test your knowledge with topic-wise quizzes, full mock tests, and previous year GATE papers.
+                    Test your knowledge with topic-wise quizzes, full mock tests, and challenge yourself with random questions.
                 </p>
             </div>
 
@@ -62,6 +79,7 @@ export default function Practice() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
+                            onClick={() => navigate(mode.link)}
                             className="glass-card p-6 cursor-pointer group hover:scale-[1.02] transition-transform"
                         >
                             <div className="flex items-center justify-between mb-4">
@@ -85,42 +103,46 @@ export default function Practice() {
             {/* Recent Attempts */}
             <div>
                 <h2 className="text-lg font-bold text-slate-800 mb-4">Recent Attempts</h2>
-                <div className="glass-card overflow-hidden">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="border-b border-slate-100">
-                                <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Date</th>
-                                <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Type</th>
-                                <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Subject</th>
-                                <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Score</th>
-                                <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Time</th>
-                                <th className="text-right py-3 px-5"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {recentAttempts.map((a, i) => (
-                                <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                    <td className="py-3.5 px-5 text-sm text-slate-500">{a.date}</td>
-                                    <td className="py-3.5 px-5">
-                                        <span className="text-xs font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-lg">{a.type}</span>
-                                    </td>
-                                    <td className="py-3.5 px-5 text-sm font-medium text-slate-700">{a.subject}</td>
-                                    <td className="py-3.5 px-5">
-                                        <span className={`text-sm font-bold ${a.percent >= 80 ? 'text-emerald-600' : a.percent >= 60 ? 'text-amber-600' : 'text-red-500'}`}>
-                                            {a.score}
-                                        </span>
-                                    </td>
-                                    <td className="py-3.5 px-5 text-sm text-slate-400">{a.time}</td>
-                                    <td className="py-3.5 px-5 text-right">
-                                        <button className="text-xs font-bold text-primary border border-primary/20 px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-all">
-                                            Review
-                                        </button>
-                                    </td>
+                {recentAttempts.length === 0 ? (
+                    <div className="glass-card p-12 text-center">
+                        <p className="text-slate-400 font-semibold mb-1">No quiz attempts yet</p>
+                        <p className="text-sm text-slate-300">Start a quiz above to track your progress here!</p>
+                    </div>
+                ) : (
+                    <div className="glass-card overflow-hidden">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-slate-100">
+                                    <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Date</th>
+                                    <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Type</th>
+                                    <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Subject</th>
+                                    <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Score</th>
+                                    <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400">Time</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {recentAttempts.map((a, i) => {
+                                    const percent = Math.round((a.score / a.total) * 100);
+                                    return (
+                                        <tr key={a.id || i} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                                            <td className="py-3.5 px-5 text-sm text-slate-500">{formatDate(a.date)}</td>
+                                            <td className="py-3.5 px-5">
+                                                <span className="text-xs font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-lg">{a.type}</span>
+                                            </td>
+                                            <td className="py-3.5 px-5 text-sm font-medium text-slate-700">{a.subjectName || 'Mixed'}</td>
+                                            <td className="py-3.5 px-5">
+                                                <span className={`text-sm font-bold ${percent >= 80 ? 'text-emerald-600' : percent >= 60 ? 'text-amber-600' : 'text-red-500'}`}>
+                                                    {a.score}/{a.total}
+                                                </span>
+                                            </td>
+                                            <td className="py-3.5 px-5 text-sm text-slate-400">{formatTime(a.timeSeconds)}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </motion.div>
     );

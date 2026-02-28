@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import SubjectDetail from './pages/SubjectDetail';
 import Subjects from './pages/Subjects';
 import Practice from './pages/Practice';
+import QuizEngine from './pages/QuizEngine';
 import Planner from './pages/Planner';
 import Performance from './pages/Performance';
 import Settings from './pages/Settings';
@@ -69,6 +70,14 @@ function AnimatedRoutes() {
           <AuthRoute>
             <Layout streak={getStreak()}>
               <Practice />
+            </Layout>
+          </AuthRoute>
+        } />
+
+        <Route path="/practice/quiz" element={
+          <AuthRoute>
+            <Layout streak={getStreak()}>
+              <QuizEngine />
             </Layout>
           </AuthRoute>
         } />
