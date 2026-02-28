@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useProgress } from './hooks/useProgress';
 import Navbar from './components/Navbar';
@@ -10,8 +10,6 @@ import QuizEngine from './pages/QuizEngine';
 import Planner from './pages/Planner';
 import Performance from './pages/Performance';
 import Settings from './pages/Settings';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
 import AuthRoute from './components/AuthRoute';
 import { AuthProvider } from './hooks/useAuth';
 import Sidebar from './components/Sidebar';
@@ -39,8 +37,9 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* Login/Signup disabled — redirect to dashboard */}
+        <Route path="/login" element={<Navigate to="/" replace />} />
+        <Route path="/signup" element={<Navigate to="/" replace />} />
 
         <Route path="/" element={
           <AuthRoute>
