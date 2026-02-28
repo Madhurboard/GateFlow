@@ -115,8 +115,8 @@ export default function QuizEngine() {
                     <ArrowLeft size={16} /> Back to Practice
                 </button>
 
-                <div className="glass-card p-8">
-                    <h1 className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight mb-2">Start a Quiz</h1>
+                <div className="glass-card p-5 md:p-8">
+                    <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight mb-2">Start a Quiz</h1>
                     <p className="text-slate-500 dark:text-slate-400 mb-8">Test your knowledge with GATE-style questions</p>
 
                     {/* Quiz Type */}
@@ -208,7 +208,7 @@ export default function QuizEngine() {
                         <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
                             Question {currentIndex + 1} / {quizQuestions.length}
                         </span>
-                        <div className="h-2 w-48 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div className="h-2 w-32 md:w-48 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                             <motion.div
                                 className="h-full bg-primary rounded-full"
                                 initial={{ width: 0 }}
@@ -229,9 +229,9 @@ export default function QuizEngine() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className="glass-card p-8"
+                        className="glass-card p-5 md:p-8"
                     >
-                        <p className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-6 leading-relaxed">{q.question}</p>
+                        <p className="text-base md:text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 md:mb-6 leading-relaxed">{q.question}</p>
 
                         <div className="space-y-3">
                             {q.options.map((option, i) => {
@@ -251,7 +251,7 @@ export default function QuizEngine() {
                                         key={i}
                                         onClick={() => selectAnswer(i)}
                                         disabled={answered}
-                                        className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center gap-4 ${classes} ${!answered ? 'cursor-pointer hover:shadow-sm' : ''}`}
+                                        className={`w-full text-left p-3 md:p-4 rounded-xl border-2 transition-all flex items-center gap-3 md:gap-4 ${classes} ${!answered ? 'cursor-pointer hover:shadow-sm' : ''}`}
                                     >
                                         <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0 ${answered && i === q.correctAnswer
                                             ? 'bg-emerald-500 text-white'
@@ -319,7 +319,7 @@ export default function QuizEngine() {
         return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl mx-auto space-y-8">
                 {/* Result Summary */}
-                <div className="glass-card p-8 text-center">
+                <div className="glass-card p-5 md:p-8 text-center">
                     <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
@@ -328,7 +328,7 @@ export default function QuizEngine() {
                     >
                         <Trophy size={40} className={grade.color} />
                     </motion.div>
-                    <h1 className={`text-3xl font-extrabold ${grade.color} mb-1`}>{grade.label}</h1>
+                    <h1 className={`text-2xl md:text-3xl font-extrabold ${grade.color} mb-1`}>{grade.label}</h1>
                     <p className="text-slate-500 dark:text-slate-400 mb-6">{results.type} · {results.subjectName}</p>
 
                     <div className="grid grid-cols-3 gap-4 mb-6">
@@ -351,7 +351,7 @@ export default function QuizEngine() {
                         ))}
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
                         <button
                             onClick={() => { setQuizState(QUIZ_STATES.SETUP); setResults(null); }}
                             className="flex-1 py-3 bg-slate-100 dark:bg-dark-surface text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-dark-hover transition-colors flex items-center justify-center gap-2 text-sm"

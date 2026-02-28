@@ -45,8 +45,8 @@ export default function SubjectDetail() {
                     >
                         <ArrowLeft size={16} /> Back
                     </button>
-                    <h1 className="text-4xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-4">
-                        <span className="text-5xl">{subject.icon}</span>
+                    <h1 className="text-2xl md:text-4xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-3 md:gap-4">
+                        <span className="text-3xl md:text-5xl">{subject.icon}</span>
                         {subject.name.replace('\n', ' ')}
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-2">
@@ -69,7 +69,7 @@ export default function SubjectDetail() {
             </div>
 
             {/* Topics */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
                 <div className="lg:col-span-2 space-y-3">
                     <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">Syllabus Progress</h2>
                     {subject.topics.map((topic, i) => {
@@ -146,7 +146,7 @@ function TopicAccordion({ topic, topicState, completedSubs, onCycleTopic, getSub
             className="glass-card overflow-hidden"
         >
             <div
-                className={`p-5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 dark:hover:bg-dark-hover transition-colors ${open ? 'bg-slate-50/50 dark:bg-dark-hover/50' : ''}`}
+                className={`p-4 md:p-5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 dark:hover:bg-dark-hover transition-colors ${open ? 'bg-slate-50/50 dark:bg-dark-hover/50' : ''}`}
                 onClick={() => setOpen(!open)}
             >
                 <div className="flex items-center gap-4">
@@ -158,7 +158,7 @@ function TopicAccordion({ topic, topicState, completedSubs, onCycleTopic, getSub
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
                     <button
                         onClick={(e) => { e.stopPropagation(); onCycleTopic(); }}
                         className={`px-2.5 py-1 rounded-lg ${cfg.bg} border border-black/5 dark:border-white/5`}

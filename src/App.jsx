@@ -13,6 +13,7 @@ import Settings from './pages/Settings';
 import AuthRoute from './components/AuthRoute';
 import { AuthProvider } from './hooks/useAuth';
 import Sidebar from './components/Sidebar';
+import BottomNav from './components/BottomNav';
 
 function Layout({ children, streak }) {
   return (
@@ -20,12 +21,13 @@ function Layout({ children, streak }) {
       <Sidebar />
       <div className="main-content flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-dark-bg transition-colors duration-300">
         <Navbar streak={streak} />
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+          <div className="max-w-7xl mx-auto py-4 md:py-8 px-4 sm:px-6 lg:px-8">
             {children}
           </div>
         </main>
       </div>
+      <BottomNav />
     </div>
   );
 }

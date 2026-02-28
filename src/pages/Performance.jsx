@@ -69,7 +69,7 @@ export default function Performance() {
             className="space-y-8"
         >
             <div>
-                <h1 className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Performance</h1>
+                <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Performance</h1>
                 <p className="text-slate-500 dark:text-slate-400 mt-1">Track your progress and identify areas for improvement</p>
             </div>
 
@@ -104,7 +104,7 @@ export default function Performance() {
                     {subjectData.map((s, i) => (
                         <div key={i} className="flex items-center gap-4">
                             <span className="text-lg w-8">{s.icon}</span>
-                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300 w-48 truncate">{s.name}</span>
+                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300 w-24 sm:w-48 truncate">{s.name}</span>
                             <div className="flex-1 h-2.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                                 <motion.div
                                     className="h-full bg-primary rounded-full"
@@ -128,14 +128,16 @@ export default function Performance() {
                             <span key={m.month + m.index} className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">{m.month}</span>
                         ))}
                     </div>
-                    <div className="flex flex-wrap gap-[3px]">
-                        {heatmapData.map((val, i) => (
-                            <div
-                                key={i}
-                                className={`w-3 h-3 rounded-sm ${heatmapColors[val.level]}`}
-                                title={`${val.date}: ${val.level > 0 ? 'Active' : 'No activity'}`}
-                            />
-                        ))}
+                    <div className="overflow-x-auto hide-scrollbar">
+                        <div className="flex flex-wrap gap-[3px] min-w-[280px]">
+                            {heatmapData.map((val, i) => (
+                                <div
+                                    key={i}
+                                    className={`w-3 h-3 rounded-sm ${heatmapColors[val.level]}`}
+                                    title={`${val.date}: ${val.level > 0 ? 'Active' : 'No activity'}`}
+                                />
+                            ))}
+                        </div>
                     </div>
                     <div className="flex items-center gap-1.5 mt-4 justify-end">
                         <span className="text-[10px] text-slate-400 dark:text-slate-500">Less</span>

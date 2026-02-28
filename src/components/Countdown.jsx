@@ -40,14 +40,14 @@ export default function Countdown() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex items-center gap-6"
+            className="flex items-center gap-3 md:gap-6"
         >
             {Object.entries(timeLeft).map(([unit, value]) => (
-                <div key={unit} className="flex flex-col items-center">
-                    <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight tabular-nums">
+                <div key={unit} className={`flex flex-col items-center ${unit === 'seconds' ? 'hidden sm:flex' : ''}`}>
+                    <span className="text-2xl md:text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight tabular-nums">
                         {value.toString().padStart(2, '0')}
                     </span>
-                    <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-black tracking-widest">
+                    <span className="text-[8px] md:text-[9px] text-slate-400 dark:text-slate-500 uppercase font-black tracking-widest">
                         {unit}
                     </span>
                 </div>

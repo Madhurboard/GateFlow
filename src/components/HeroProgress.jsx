@@ -2,8 +2,10 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 export default function HeroProgress({ percentage, totalTopics, completedTopics }) {
-    const size = 320;
-    const strokeWidth = 24;
+    // Responsive: smaller ring on mobile
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    const size = isMobile ? 220 : 320;
+    const strokeWidth = isMobile ? 18 : 24;
     const radius = (size - strokeWidth) / 2;
     const circumference = Math.PI * radius;
     const offset = circumference - (percentage / 100) * circumference;
@@ -27,7 +29,7 @@ export default function HeroProgress({ percentage, totalTopics, completedTopics 
     }, [percentage]);
 
     return (
-        <div className="relative inline-flex flex-col items-center justify-center p-8 mt-4" style={{ width: size, height: size * 0.6 }}>
+        <div className="relative inline-flex flex-col items-center justify-center p-4 sm:p-8 mt-2 sm:mt-4" style={{ width: size, height: size * 0.6 }}>
             <svg width={size} height={size / 2} className="relative z-10 overflow-visible">
                 {/* Background Track Arc */}
                 <path
@@ -61,27 +63,27 @@ export default function HeroProgress({ percentage, totalTopics, completedTopics 
                     transition={{ duration: 0.6, delay: 0.4 }}
                 >
                     <div className="flex items-baseline">
-                        <span className="text-7xl sm:text-[80px] font-extrabold text-slate-900 dark:text-slate-100 tracking-tighter leading-none">
+                        <span className="text-5xl sm:text-7xl md:text-[80px] font-extrabold text-slate-900 dark:text-slate-100 tracking-tighter leading-none">
                             {count}
                         </span>
-                        <span className="text-3xl font-bold text-slate-400 dark:text-slate-500 ml-1">%</span>
+                        <span className="text-2xl sm:text-3xl font-bold text-slate-400 dark:text-slate-500 ml-1">%</span>
                     </div>
-                    <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Overall Progress</div>
+                    <div className="text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Overall Progress</div>
                 </motion.div>
             </div>
 
             {/* Bottom details */}
             <motion.div
-                className="absolute -bottom-10 flex gap-8 text-[13px] font-semibold"
+                className="absolute -bottom-8 sm:-bottom-10 flex gap-4 sm:gap-8 text-[11px] sm:text-[13px] font-semibold"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.8 }}
             >
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-success" />
                     <span className="text-slate-600 dark:text-slate-300">{completedTopics} <span className="text-slate-400 dark:text-slate-500 font-medium">Mastered</span></span>
                 </div>
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-600" />
                     <span className="text-slate-600 dark:text-slate-300">{totalTopics} <span className="text-slate-400 dark:text-slate-500 font-medium">Total</span></span>
                 </div>

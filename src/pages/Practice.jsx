@@ -62,7 +62,7 @@ export default function Practice() {
             <div className="glass-card p-8">
                 <div className="flex items-center gap-3 mb-2">
                     <Award className="text-primary" size={28} />
-                    <h1 className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Practice Mode</h1>
+                    <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Practice Mode</h1>
                 </div>
                 <p className="text-slate-500 dark:text-slate-400 max-w-xl">
                     Test your knowledge with topic-wise quizzes, full mock tests, and challenge yourself with random questions.
@@ -110,7 +110,28 @@ export default function Practice() {
                     </div>
                 ) : (
                     <div className="glass-card overflow-hidden">
-                        <table className="w-full">
+                        {/* Mobile: card layout */}
+                        <div className="sm:hidden divide-y divide-slate-100 dark:divide-dark-border">
+                            {recentAttempts.map((a, i) => {
+                                const percent = Math.round((a.score / a.total) * 100);
+                                return (
+                                    <div key={a.id || i} className="p-4 space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-lg">{a.type}</span>
+                                            <span className="text-xs text-slate-400 dark:text-slate-500">{formatDate(a.date)}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{a.subjectName || 'Mixed'}</span>
+                                            <span className={`text-sm font-bold ${percent >= 80 ? 'text-emerald-600 dark:text-emerald-400' : percent >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'}`}>
+                                                {a.score}/{a.total} · {formatTime(a.timeSeconds)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        {/* Desktop: table layout */}
+                        <table className="w-full hidden sm:table">
                             <thead>
                                 <tr className="border-b border-slate-100 dark:border-dark-border">
                                     <th className="text-left py-3 px-5 text-[11px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Date</th>

@@ -37,7 +37,7 @@ export default function Sidebar() {
 
     return (
         <motion.aside
-            className={`h-screen sticky top-0 bg-white dark:bg-dark-card border-r border-slate-200 dark:border-dark-border flex flex-col transition-all duration-300 z-50 ${isCollapsed ? 'w-20' : 'w-64'}`}
+            className={`h-screen sticky top-0 bg-white dark:bg-dark-card border-r border-slate-200 dark:border-dark-border hidden md:flex flex-col transition-all duration-300 z-50 ${isCollapsed ? 'w-20' : 'w-64'}`}
             initial={{ x: -100 }}
             animate={{ x: 0 }}
         >

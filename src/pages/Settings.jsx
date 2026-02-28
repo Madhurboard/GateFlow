@@ -42,11 +42,11 @@ export default function Settings() {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="max-w-2xl space-y-8"
+            className="max-w-2xl mx-auto space-y-6 md:space-y-8"
         >
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Settings</h1>
+                <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Settings</h1>
                 <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your preferences and account</p>
             </div>
 
@@ -153,7 +153,7 @@ export default function Settings() {
 
                     <div>
                         <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Preferred Study Time</p>
-                        <div className="flex gap-3">
+                        <div className="flex gap-3 flex-wrap">
                             {timeChips.map(chip => (
                                 <button
                                     key={chip.label}

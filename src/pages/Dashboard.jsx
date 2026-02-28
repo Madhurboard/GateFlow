@@ -20,13 +20,13 @@ export default function Dashboard() {
     return (
         <div className="animate-in fade-in duration-700">
             {/* Hero Section */}
-            <section className="bg-white dark:bg-dark-card rounded-[2.5rem] p-12 mb-12 border border-slate-100 dark:border-dark-border shadow-sm dark:shadow-card-dark flex flex-col lg:flex-row items-center justify-between gap-12">
+            <section className="glass-card p-6 md:p-12 mb-6 md:mb-12 flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-12">
                 <div className="max-w-xl">
-                    <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 dark:text-slate-100 mb-4 leading-tight">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800 dark:text-slate-100 mb-3 md:mb-4 leading-tight">
                         Welcome back, <br />
                         <span className="text-primary italic">Scholar</span>
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 text-lg mb-8 font-medium">
+                    <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg mb-6 md:mb-8 font-medium">
                         {overall === 0
                             ? 'Start your journey — mark topics as you study them!'
                             : overall < 25
@@ -39,11 +39,11 @@ export default function Dashboard() {
                         }
                     </p>
                     <div className="flex flex-wrap gap-4">
-                        <div className="bg-slate-50 dark:bg-dark-surface rounded-2xl p-4 flex-1 min-w-[200px] border border-slate-100 dark:border-dark-border">
+                        <div className="bg-slate-50 dark:bg-dark-surface rounded-2xl p-3 md:p-4 flex-1 min-w-[160px] md:min-w-[200px] border border-slate-100 dark:border-dark-border">
                             <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Target</span>
-                            <span className="text-xl font-bold text-slate-700 dark:text-slate-200 underline decoration-primary decoration-4 underline-offset-4 cursor-default">GATE 2027 Examination</span>
+                            <span className="text-lg md:text-xl font-bold text-slate-700 dark:text-slate-200 underline decoration-primary decoration-4 underline-offset-4 cursor-default">GATE 2027 Examination</span>
                         </div>
-                        <div className="bg-slate-50 dark:bg-dark-surface rounded-2xl p-4 flex-1 min-w-[200px] border border-slate-100 dark:border-dark-border">
+                        <div className="bg-slate-50 dark:bg-dark-surface rounded-2xl p-3 md:p-4 flex-1 min-w-[160px] md:min-w-[200px] border border-slate-100 dark:border-dark-border">
                             <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Time Remaining</span>
                             <div className="flex items-center gap-2">
                                 <Countdown />
@@ -62,8 +62,8 @@ export default function Dashboard() {
             </section>
 
             {/* Subject Grid Header */}
-            <div className="flex items-center justify-between mb-8 px-2">
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Your Subjects</h2>
+            <div className="flex items-center justify-between mb-6 md:mb-8 px-1 md:px-2">
+                <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Your Subjects</h2>
                 <button
                     onClick={() => navigate('/subjects')}
                     className="text-sm font-bold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 group"

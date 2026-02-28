@@ -36,7 +36,7 @@ export default {
         },
         // Dark mode surfaces
         dark: {
-          bg: '#0F172A',
+          bg: '#0B1120',
           card: '#1E293B',
           border: '#334155',
           hover: '#293548',

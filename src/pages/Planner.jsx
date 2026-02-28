@@ -109,18 +109,18 @@ export default function Planner() {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Study Planner</h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Organize your weekly study schedule</p>
+                    <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Study Planner</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm md:text-base">Organize your weekly study schedule</p>
                 </div>
-                <button onClick={() => openAddSession()} className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-primary-dark transition-colors shadow-sm">
+                <button onClick={() => openAddSession()} className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-primary-dark transition-colors shadow-sm w-full sm:w-auto justify-center">
                     <Plus size={18} /> Add Session
                 </button>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
                 {[
                     { label: 'This Week', value: `${totalHours} hrs`, icon: Clock, color: 'text-primary' },
                     { label: 'Daily Average', value: `${(totalHours / 7).toFixed(1)} hrs`, icon: Target, color: 'text-emerald-600' },
@@ -150,34 +150,36 @@ export default function Planner() {
                             <button onClick={() => setWeekOffset(o => o + 1)} className="p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-dark-hover text-slate-400"><ChevronRight size={18} /></button>
                         </div>
                     </div>
-                    <div className="grid grid-cols-7 gap-2">
-                        {weekDays.map((day, di) => (
-                            <div key={di} className="min-h-[200px]">
-                                <div className={`text-center py-2 mb-2 rounded-lg ${day.isToday ? 'bg-primary text-white' : 'bg-slate-50 dark:bg-dark-surface text-slate-500 dark:text-slate-400'}`}>
-                                    <div className="text-[10px] font-black uppercase tracking-widest">{day.name}</div>
-                                    <div className="text-sm font-bold">{day.date}</div>
+                    <div className="overflow-x-auto hide-scrollbar -mx-2 px-2">
+                        <div className="grid grid-cols-7 gap-2 min-w-[700px]">
+                            {weekDays.map((day, di) => (
+                                <div key={di} className="min-h-[200px]">
+                                    <div className={`text-center py-2 mb-2 rounded-lg ${day.isToday ? 'bg-primary text-white' : 'bg-slate-50 dark:bg-dark-surface text-slate-500 dark:text-slate-400'}`}>
+                                        <div className="text-[10px] font-black uppercase tracking-widest">{day.name}</div>
+                                        <div className="text-sm font-bold">{day.date}</div>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        {sessions.filter(s => s.day === di).map(session => (
+                                            <div
+                                                key={session.id}
+                                                onClick={() => openEditSession(session)}
+                                                className={`p-2 rounded-xl border text-[10px] leading-tight cursor-pointer hover:shadow-sm transition-shadow relative group ${colorOptions[session.colorIdx].classes}`}
+                                            >
+                                                <button onClick={(e) => { e.stopPropagation(); deleteSession(session.id); }} className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <X size={10} />
+                                                </button>
+                                                <p className="font-bold">{session.subject}</p>
+                                                <p className="opacity-70 mt-0.5 truncate">{session.topic}</p>
+                                                <p className="mt-1 font-semibold opacity-60">{session.time} · {session.duration}</p>
+                                            </div>
+                                        ))}
+                                        <button onClick={() => openAddSession(di)} className="w-full py-2 text-slate-300 dark:text-slate-600 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors text-xs">
+                                            <Plus size={14} className="mx-auto" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="space-y-1.5">
-                                    {sessions.filter(s => s.day === di).map(session => (
-                                        <div
-                                            key={session.id}
-                                            onClick={() => openEditSession(session)}
-                                            className={`p-2 rounded-xl border text-[10px] leading-tight cursor-pointer hover:shadow-sm transition-shadow relative group ${colorOptions[session.colorIdx].classes}`}
-                                        >
-                                            <button onClick={(e) => { e.stopPropagation(); deleteSession(session.id); }} className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <X size={10} />
-                                            </button>
-                                            <p className="font-bold">{session.subject}</p>
-                                            <p className="opacity-70 mt-0.5 truncate">{session.topic}</p>
-                                            <p className="mt-1 font-semibold opacity-60">{session.time} · {session.duration}</p>
-                                        </div>
-                                    ))}
-                                    <button onClick={() => openAddSession(di)} className="w-full py-2 text-slate-300 dark:text-slate-600 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors text-xs">
-                                        <Plus size={14} className="mx-auto" />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
 

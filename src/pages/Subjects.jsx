@@ -32,7 +32,7 @@ export default function Subjects() {
         >
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">All Subjects</h1>
+                <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">All Subjects</h1>
                 <p className="text-slate-500 dark:text-slate-400 mt-1">Track your progress across all GATE CSE topics</p>
             </div>
 
@@ -48,7 +48,7 @@ export default function Subjects() {
                         className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                     />
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
                     {filters.map(f => (
                         <button
                             key={f}
