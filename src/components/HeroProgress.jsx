@@ -5,14 +5,11 @@ export default function HeroProgress({ percentage, totalTopics, completedTopics 
     const size = 320;
     const strokeWidth = 24;
     const radius = (size - strokeWidth) / 2;
-    // We only want a half circle (speedometer style)
     const circumference = Math.PI * radius;
-    // Offset calculation for a half circle
     const offset = circumference - (percentage / 100) * circumference;
 
     const [count, setCount] = useState(0);
 
-    // Animate the counter on mount
     useEffect(() => {
         let start = 0;
         const duration = 1500;
@@ -36,7 +33,7 @@ export default function HeroProgress({ percentage, totalTopics, completedTopics 
                 <path
                     d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${size - strokeWidth / 2} ${size / 2}`}
                     fill="none"
-                    stroke="#F1F5F9"
+                    className="stroke-slate-100 dark:stroke-slate-700"
                     strokeWidth={strokeWidth}
                     strokeLinecap="round"
                 />
@@ -64,12 +61,12 @@ export default function HeroProgress({ percentage, totalTopics, completedTopics 
                     transition={{ duration: 0.6, delay: 0.4 }}
                 >
                     <div className="flex items-baseline">
-                        <span className="text-7xl sm:text-[80px] font-extrabold text-slate-900 tracking-tighter leading-none">
+                        <span className="text-7xl sm:text-[80px] font-extrabold text-slate-900 dark:text-slate-100 tracking-tighter leading-none">
                             {count}
                         </span>
-                        <span className="text-3xl font-bold text-slate-400 ml-1">%</span>
+                        <span className="text-3xl font-bold text-slate-400 dark:text-slate-500 ml-1">%</span>
                     </div>
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Overall Progress</div>
+                    <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Overall Progress</div>
                 </motion.div>
             </div>
 
@@ -82,11 +79,11 @@ export default function HeroProgress({ percentage, totalTopics, completedTopics 
             >
                 <div className="flex items-center gap-2.5">
                     <div className="w-2 h-2 rounded-full bg-success" />
-                    <span className="text-slate-600">{completedTopics} <span className="text-slate-400 font-medium">Mastered</span></span>
+                    <span className="text-slate-600 dark:text-slate-300">{completedTopics} <span className="text-slate-400 dark:text-slate-500 font-medium">Mastered</span></span>
                 </div>
                 <div className="flex items-center gap-2.5">
-                    <div className="w-2 h-2 rounded-full bg-slate-200" />
-                    <span className="text-slate-600">{totalTopics} <span className="text-slate-400 font-medium">Total</span></span>
+                    <div className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-600" />
+                    <span className="text-slate-600 dark:text-slate-300">{totalTopics} <span className="text-slate-400 dark:text-slate-500 font-medium">Total</span></span>
                 </div>
             </motion.div>
         </div>

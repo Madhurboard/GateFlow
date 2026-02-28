@@ -5,19 +5,19 @@ const statusConfig = {
     not_started: {
         label: 'Not Started',
         color: 'text-slate-500',
-        bg: 'bg-slate-100',
-        barColor: 'bg-slate-200',
+        bg: 'bg-slate-100 dark:bg-slate-800',
+        barColor: 'bg-slate-200 dark:bg-slate-700',
     },
     in_progress: {
         label: 'In Progress',
-        color: 'text-amber-600',
-        bg: 'bg-amber-50',
+        color: 'text-amber-600 dark:text-amber-400',
+        bg: 'bg-amber-50 dark:bg-amber-900/30',
         barColor: 'bg-amber-400',
     },
     confident: {
         label: 'Confident',
-        color: 'text-emerald-700',
-        bg: 'bg-emerald-50',
+        color: 'text-emerald-700 dark:text-emerald-400',
+        bg: 'bg-emerald-50 dark:bg-emerald-900/30',
         barColor: 'bg-emerald-500',
     },
 };
@@ -28,7 +28,7 @@ export default function SubjectCard({ subject, progress, index, className = '' }
 
     return (
         <motion.div
-            className={`glass-card p-6 flex flex-col justify-between cursor-pointer group hover:bg-slate-50/50 ${className}`}
+            className={`glass-card p-6 flex flex-col justify-between cursor-pointer group hover:bg-slate-50/50 dark:hover:bg-dark-hover ${className}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -39,10 +39,10 @@ export default function SubjectCard({ subject, progress, index, className = '' }
         >
             <div className="flex flex-col h-full">
                 <div className="flex justify-between items-start mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-2xl shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-dark-surface flex items-center justify-center text-2xl shadow-sm border border-slate-100 dark:border-dark-border group-hover:scale-110 transition-transform">
                         {subject.icon}
                     </div>
-                    <div className={`px-2.5 py-1 rounded-lg ${config.bg} border border-black/5`}>
+                    <div className={`px-2.5 py-1 rounded-lg ${config.bg} border border-black/5 dark:border-white/5`}>
                         <span className={`text-[10px] uppercase font-bold tracking-wider ${config.color}`}>
                             {config.label}
                         </span>
@@ -50,18 +50,18 @@ export default function SubjectCard({ subject, progress, index, className = '' }
                 </div>
 
                 <div className="flex-1">
-                    <h3 className="text-lg font-bold text-slate-800 mb-1 group-hover:text-primary transition-colors">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1 group-hover:text-primary transition-colors">
                         {subject.name}
                     </h3>
-                    <p className="text-xs text-slate-500 font-medium">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                         {progress.completed} / {progress.total} topics covered
                     </p>
                 </div>
 
                 <div className="mt-8">
-                    <div className="flex justify-between text-[11px] mb-2 font-bold uppercase tracking-tight text-slate-400">
+                    <div className="flex justify-between text-[11px] mb-2 font-bold uppercase tracking-tight text-slate-400 dark:text-slate-500">
                         <span>Progress</span>
-                        <span className="text-slate-600">{progress.percentage}%</span>
+                        <span className="text-slate-600 dark:text-slate-300">{progress.percentage}%</span>
                     </div>
 
                     <div className="progress-bar-container">

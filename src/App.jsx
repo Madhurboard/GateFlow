@@ -18,9 +18,9 @@ import Sidebar from './components/Sidebar';
 
 function Layout({ children, streak }) {
   return (
-    <div className="app-container flex min-h-screen">
+    <div className="app-container flex min-h-screen bg-slate-50 dark:bg-dark-bg transition-colors duration-300">
       <Sidebar />
-      <div className="main-content flex-1 flex flex-col min-w-0">
+      <div className="main-content flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-dark-bg transition-colors duration-300">
         <Navbar streak={streak} />
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -114,7 +114,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-slate-50 dark:bg-dark-bg transition-colors duration-300">
           <AnimatedRoutes />
         </div>
       </BrowserRouter>

@@ -19,6 +19,13 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body,
+  html.dark body {
+    background-color: #0F172A;
+    color: #E2E8F0;
   }
 
   ::-webkit-scrollbar {
@@ -32,6 +39,10 @@
   ::-webkit-scrollbar-thumb {
     background: #CBD5E1;
     border-radius: 10px;
+  }
+
+  html.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
   }
 }
 
@@ -56,12 +67,27 @@
     @apply shadow-card-hover border-slate-300;
   }
 
+  html.dark .glass-card {
+    background-color: #1E293B;
+    border-color: #334155;
+    box-shadow: 0 2px 12px -2px rgba(0, 0, 0, 0.3);
+  }
+
+  html.dark .glass-card:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    border-color: #475569;
+  }
+
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark;
   }
 
   .progress-bar-container {
     @apply w-full h-1.5 bg-slate-100 rounded-full overflow-hidden;
+  }
+
+  html.dark .progress-bar-container {
+    @apply bg-slate-700;
   }
 
   .progress-bar-fill {

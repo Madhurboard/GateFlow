@@ -12,7 +12,6 @@ export default function QuizEngine() {
     const [searchParams] = useSearchParams();
     const { getQuestions, getMockTestQuestions, saveAttempt } = useQuiz();
 
-    // State
     const [quizState, setQuizState] = useState(QUIZ_STATES.SETUP);
     const [selectedSubject, setSelectedSubject] = useState(searchParams.get('subject') || '');
     const [selectedTopic, setSelectedTopic] = useState(searchParams.get('topic') || '');
@@ -25,14 +24,12 @@ export default function QuizEngine() {
     const [results, setResults] = useState(null);
     const timerRef = useRef(null);
 
-    // Available topics for selected subject
     const availableTopics = useMemo(() => {
         if (!selectedSubject) return [];
         const subj = subjects.find(s => s.id === selectedSubject);
         return subj ? subj.topics : [];
     }, [selectedSubject]);
 
-    // Timer
     useEffect(() => {
         if (quizState === QUIZ_STATES.ACTIVE) {
             timerRef.current = setInterval(() => {
@@ -48,7 +45,6 @@ export default function QuizEngine() {
         return `${m}:${s.toString().padStart(2, '0')}`;
     };
 
-    // Start quiz
     const startQuiz = () => {
         let qs;
         if (quizType === 'mock') {
@@ -65,14 +61,12 @@ export default function QuizEngine() {
         setQuizState(QUIZ_STATES.ACTIVE);
     };
 
-    // Answer a question
     const selectAnswer = (answerIdx) => {
-        if (answers[currentIndex] !== undefined) return; // Already answered
+        if (answers[currentIndex] !== undefined) return;
         setAnswers(prev => ({ ...prev, [currentIndex]: answerIdx }));
         setShowExplanation(true);
     };
 
-    // Next question
     const nextQuestion = () => {
         setShowExplanation(false);
         if (currentIndex < quizQuestions.length - 1) {
@@ -82,7 +76,6 @@ export default function QuizEngine() {
         }
     };
 
-    // Finish quiz
     const finishQuiz = () => {
         clearInterval(timerRef.current);
         const questionResults = quizQuestions.map((q, i) => ({
@@ -123,12 +116,12 @@ export default function QuizEngine() {
                 </button>
 
                 <div className="glass-card p-8">
-                    <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight mb-2">Start a Quiz</h1>
-                    <p className="text-slate-500 mb-8">Test your knowledge with GATE-style questions</p>
+                    <h1 className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight mb-2">Start a Quiz</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mb-8">Test your knowledge with GATE-style questions</p>
 
                     {/* Quiz Type */}
                     <div className="mb-6">
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 block mb-3">Quiz Type</label>
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 block mb-3">Quiz Type</label>
                         <div className="flex gap-3">
                             {[
                                 { value: 'topic', label: 'Topic Quiz', desc: '10 questions' },
@@ -138,12 +131,12 @@ export default function QuizEngine() {
                                     key={t.value}
                                     onClick={() => setQuizType(t.value)}
                                     className={`flex-1 p-4 rounded-xl border-2 transition-all text-left ${quizType === t.value
-                                        ? 'border-primary bg-primary/5'
-                                        : 'border-slate-200 hover:border-slate-300'
+                                        ? 'border-primary bg-primary/5 dark:bg-primary/10'
+                                        : 'border-slate-200 dark:border-dark-border hover:border-slate-300 dark:hover:border-slate-500'
                                         }`}
                                 >
-                                    <p className="font-bold text-sm text-slate-800">{t.label}</p>
-                                    <p className="text-xs text-slate-400 mt-0.5">{t.desc}</p>
+                                    <p className="font-bold text-sm text-slate-800 dark:text-slate-100">{t.label}</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{t.desc}</p>
                                 </button>
                             ))}
                         </div>
@@ -153,15 +146,15 @@ export default function QuizEngine() {
                     {quizType === 'topic' && (
                         <>
                             <div className="mb-6">
-                                <label className="text-xs font-black uppercase tracking-widest text-slate-400 block mb-3">Subject</label>
+                                <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 block mb-3">Subject</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     {subjects.map(s => (
                                         <button
                                             key={s.id}
                                             onClick={() => { setSelectedSubject(s.id); setSelectedTopic(''); }}
                                             className={`p-3 rounded-xl border text-left transition-all text-sm ${selectedSubject === s.id
-                                                ? 'border-primary bg-primary/5 text-primary font-bold'
-                                                : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                                                ? 'border-primary bg-primary/5 dark:bg-primary/10 text-primary font-bold'
+                                                : 'border-slate-200 dark:border-dark-border text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                                                 }`}
                                         >
                                             <span className="mr-2">{s.icon}</span>
@@ -171,14 +164,13 @@ export default function QuizEngine() {
                                 </div>
                             </div>
 
-                            {/* Optional Topic */}
                             {selectedSubject && availableTopics.length > 0 && (
                                 <div className="mb-6">
-                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400 block mb-3">Topic (Optional)</label>
+                                    <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 block mb-3">Topic (Optional)</label>
                                     <select
                                         value={selectedTopic}
                                         onChange={e => setSelectedTopic(e.target.value)}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                                        className="w-full bg-slate-50 dark:bg-dark-surface border border-slate-200 dark:border-dark-border text-slate-800 dark:text-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
                                     >
                                         <option value="">All topics</option>
                                         {availableTopics.map(t => (
@@ -213,10 +205,10 @@ export default function QuizEngine() {
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+                        <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
                             Question {currentIndex + 1} / {quizQuestions.length}
                         </span>
-                        <div className="h-2 w-48 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-2 w-48 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                             <motion.div
                                 className="h-full bg-primary rounded-full"
                                 initial={{ width: 0 }}
@@ -224,7 +216,7 @@ export default function QuizEngine() {
                             />
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 text-slate-500">
+                    <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                         <Clock size={16} />
                         <span className="text-sm font-bold tabular-nums">{formatTime(elapsedSeconds)}</span>
                     </div>
@@ -239,18 +231,18 @@ export default function QuizEngine() {
                         exit={{ opacity: 0, x: -20 }}
                         className="glass-card p-8"
                     >
-                        <p className="text-lg font-bold text-slate-800 mb-6 leading-relaxed">{q.question}</p>
+                        <p className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-6 leading-relaxed">{q.question}</p>
 
                         <div className="space-y-3">
                             {q.options.map((option, i) => {
-                                let classes = 'border-slate-200 hover:border-slate-300 text-slate-700';
+                                let classes = 'border-slate-200 dark:border-dark-border hover:border-slate-300 dark:hover:border-slate-500 text-slate-700 dark:text-slate-200';
                                 if (answered) {
                                     if (i === q.correctAnswer) {
-                                        classes = 'border-emerald-400 bg-emerald-50 text-emerald-800';
+                                        classes = 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200';
                                     } else if (i === userAnswer && i !== q.correctAnswer) {
-                                        classes = 'border-red-400 bg-red-50 text-red-800';
+                                        classes = 'border-red-400 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
                                     } else {
-                                        classes = 'border-slate-100 text-slate-400';
+                                        classes = 'border-slate-100 dark:border-dark-border/50 text-slate-400 dark:text-slate-600';
                                     }
                                 }
 
@@ -265,7 +257,7 @@ export default function QuizEngine() {
                                             ? 'bg-emerald-500 text-white'
                                             : answered && i === userAnswer
                                                 ? 'bg-red-500 text-white'
-                                                : 'bg-slate-100 text-slate-500'
+                                                : 'bg-slate-100 dark:bg-dark-surface text-slate-500 dark:text-slate-400'
                                             }`}>
                                             {answered && i === q.correctAnswer ? <CheckCircle size={18} /> :
                                                 answered && i === userAnswer ? <XCircle size={18} /> :
@@ -284,10 +276,10 @@ export default function QuizEngine() {
                                     initial={{ opacity: 0, height: 0 }}
                                     animate={{ opacity: 1, height: 'auto' }}
                                     exit={{ opacity: 0, height: 0 }}
-                                    className="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-200"
+                                    className="mt-6 p-4 rounded-xl bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
                                 >
-                                    <p className="text-xs font-black uppercase tracking-widest text-blue-400 mb-1">Explanation</p>
-                                    <p className="text-sm text-blue-800 leading-relaxed">{q.explanation}</p>
+                                    <p className="text-xs font-black uppercase tracking-widest text-blue-400 dark:text-blue-300 mb-1">Explanation</p>
+                                    <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed">{q.explanation}</p>
                                 </motion.div>
                             )}
                         </AnimatePresence>
@@ -317,10 +309,10 @@ export default function QuizEngine() {
     if (quizState === QUIZ_STATES.RESULTS && results) {
         const percentage = Math.round((results.score / results.total) * 100);
         const getGrade = () => {
-            if (percentage >= 90) return { label: 'Excellent!', color: 'text-emerald-600', bg: 'bg-emerald-50' };
-            if (percentage >= 70) return { label: 'Good Job!', color: 'text-blue-600', bg: 'bg-blue-50' };
-            if (percentage >= 50) return { label: 'Keep Practicing', color: 'text-amber-600', bg: 'bg-amber-50' };
-            return { label: 'Needs Improvement', color: 'text-red-600', bg: 'bg-red-50' };
+            if (percentage >= 90) return { label: 'Excellent!', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/30' };
+            if (percentage >= 70) return { label: 'Good Job!', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/30' };
+            if (percentage >= 50) return { label: 'Keep Practicing', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/30' };
+            return { label: 'Needs Improvement', color: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-900/30' };
         };
         const grade = getGrade();
 
@@ -337,24 +329,24 @@ export default function QuizEngine() {
                         <Trophy size={40} className={grade.color} />
                     </motion.div>
                     <h1 className={`text-3xl font-extrabold ${grade.color} mb-1`}>{grade.label}</h1>
-                    <p className="text-slate-500 mb-6">{results.type} · {results.subjectName}</p>
+                    <p className="text-slate-500 dark:text-slate-400 mb-6">{results.type} · {results.subjectName}</p>
 
                     <div className="grid grid-cols-3 gap-4 mb-6">
                         {[
                             { label: 'Score', value: `${results.score}/${results.total}`, icon: Target, color: 'text-primary' },
-                            { label: 'Percentage', value: `${percentage}%`, icon: Zap, color: percentage >= 70 ? 'text-emerald-600' : 'text-amber-500' },
-                            { label: 'Time', value: formatTime(results.timeSeconds), icon: Clock, color: 'text-slate-500' },
+                            { label: 'Percentage', value: `${percentage}%`, icon: Zap, color: percentage >= 70 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-500 dark:text-amber-400' },
+                            { label: 'Time', value: formatTime(results.timeSeconds), icon: Clock, color: 'text-slate-500 dark:text-slate-400' },
                         ].map((stat, i) => (
                             <motion.div
                                 key={stat.label}
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 + i * 0.1 }}
-                                className="bg-slate-50 rounded-xl p-4"
+                                className="bg-slate-50 dark:bg-dark-surface rounded-xl p-4"
                             >
                                 <stat.icon size={18} className={`${stat.color} mx-auto mb-1`} />
-                                <p className="text-lg font-extrabold text-slate-800">{stat.value}</p>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
+                                <p className="text-lg font-extrabold text-slate-800 dark:text-slate-100">{stat.value}</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">{stat.label}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -362,7 +354,7 @@ export default function QuizEngine() {
                     <div className="flex gap-3">
                         <button
                             onClick={() => { setQuizState(QUIZ_STATES.SETUP); setResults(null); }}
-                            className="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2 text-sm"
+                            className="flex-1 py-3 bg-slate-100 dark:bg-dark-surface text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-dark-hover transition-colors flex items-center justify-center gap-2 text-sm"
                         >
                             <RotateCcw size={16} /> Try Again
                         </button>
@@ -377,21 +369,21 @@ export default function QuizEngine() {
 
                 {/* Question Breakdown */}
                 <div className="glass-card p-6">
-                    <h2 className="text-lg font-bold text-slate-800 mb-4">Question Breakdown</h2>
+                    <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Question Breakdown</h2>
                     <div className="space-y-2">
                         {quizQuestions.map((q, i) => {
                             const userAns = answers[i];
                             const correct = userAns === q.correctAnswer;
                             return (
-                                <div key={i} className={`flex items-start gap-3 p-3 rounded-xl ${correct ? 'bg-emerald-50' : 'bg-red-50'}`}>
+                                <div key={i} className={`flex items-start gap-3 p-3 rounded-xl ${correct ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
                                     <div className={`w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5 ${correct ? 'bg-emerald-500' : 'bg-red-500'} text-white`}>
                                         {correct ? <CheckCircle size={14} /> : <XCircle size={14} />}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-slate-700 leading-relaxed">{q.question}</p>
-                                        <p className="text-xs text-slate-400 mt-1">
-                                            Your answer: <span className={correct ? 'text-emerald-600 font-bold' : 'text-red-600 font-bold'}>{q.options[userAns] ?? 'No answer'}</span>
-                                            {!correct && <> · Correct: <span className="text-emerald-600 font-bold">{q.options[q.correctAnswer]}</span></>}
+                                        <p className="text-sm font-medium text-slate-700 dark:text-slate-200 leading-relaxed">{q.question}</p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                                            Your answer: <span className={correct ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-red-600 dark:text-red-400 font-bold'}>{q.options[userAns] ?? 'No answer'}</span>
+                                            {!correct && <> · Correct: <span className="text-emerald-600 dark:text-emerald-400 font-bold">{q.options[q.correctAnswer]}</span></>}
                                         </p>
                                     </div>
                                 </div>

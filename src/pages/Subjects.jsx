@@ -32,8 +32,8 @@ export default function Subjects() {
         >
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">All Subjects</h1>
-                <p className="text-slate-500 mt-1">Track your progress across all GATE CSE topics</p>
+                <h1 className="text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">All Subjects</h1>
+                <p className="text-slate-500 dark:text-slate-400 mt-1">Track your progress across all GATE CSE topics</p>
             </div>
 
             {/* Search & Filters */}
@@ -45,7 +45,7 @@ export default function Subjects() {
                         placeholder="Search subjects..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                     />
                 </div>
                 <div className="flex gap-2">
@@ -54,8 +54,8 @@ export default function Subjects() {
                             key={f}
                             onClick={() => setActiveFilter(f)}
                             className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${activeFilter === f
-                                    ? 'bg-primary text-white shadow-sm'
-                                    : 'bg-white border border-slate-200 text-slate-500 hover:border-slate-300'
+                                ? 'bg-primary text-white shadow-sm'
+                                : 'bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-500'
                                 }`}
                         >
                             {f}
@@ -81,7 +81,7 @@ export default function Subjects() {
                                 <span className="text-3xl">{subject.icon}</span>
                                 <div className="relative w-12 h-12">
                                     <svg className="w-12 h-12 -rotate-90" viewBox="0 0 36 36">
-                                        <circle cx="18" cy="18" r="15.5" fill="none" stroke="#E2E8F0" strokeWidth="3" />
+                                        <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-slate-200 dark:stroke-slate-700" strokeWidth="3" />
                                         <circle
                                             cx="18" cy="18" r="15.5" fill="none"
                                             stroke="#3B82F6" strokeWidth="3"
@@ -89,21 +89,21 @@ export default function Subjects() {
                                             strokeLinecap="round"
                                         />
                                     </svg>
-                                    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-slate-700">
+                                    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-slate-700 dark:text-slate-200">
                                         {prog.percentage}%
                                     </span>
                                 </div>
                             </div>
-                            <h3 className="text-base font-bold text-slate-800 mb-1 leading-tight">
+                            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-1 leading-tight">
                                 {subject.name.replace('\n', ' ')}
                             </h3>
-                            <p className="text-xs text-slate-400 font-semibold mb-3">
+                            <p className="text-xs text-slate-400 dark:text-slate-500 font-semibold mb-3">
                                 {prog.completed} / {prog.total} topics covered
                             </p>
-                            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                                 <div
                                     className={`h-full rounded-full transition-all duration-500 ${prog.percentage === 100 ? 'bg-emerald-500' :
-                                            prog.percentage > 0 ? 'bg-primary' : 'bg-slate-200'
+                                        prog.percentage > 0 ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-600'
                                         }`}
                                     style={{ width: `${prog.percentage}%` }}
                                 />
@@ -114,7 +114,7 @@ export default function Subjects() {
             </div>
 
             {filtered.length === 0 && (
-                <div className="text-center py-20 text-slate-400">
+                <div className="text-center py-20 text-slate-400 dark:text-slate-500">
                     <p className="text-lg font-semibold">No subjects found</p>
                     <p className="text-sm mt-1">Try a different search or filter</p>
                 </div>

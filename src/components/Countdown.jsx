@@ -44,10 +44,10 @@ export default function Countdown() {
         >
             {Object.entries(timeLeft).map(([unit, value]) => (
                 <div key={unit} className="flex flex-col items-center">
-                    <span className="text-3xl font-black text-slate-800 tracking-tight tabular-nums">
+                    <span className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight tabular-nums">
                         {value.toString().padStart(2, '0')}
                     </span>
-                    <span className="text-[9px] text-slate-400 uppercase font-black tracking-widest">
+                    <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-black tracking-widest">
                         {unit}
                     </span>
                 </div>
