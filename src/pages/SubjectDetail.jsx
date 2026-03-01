@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ChevronDown, Check } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Check, RefreshCw } from 'lucide-react';
 import { subjects } from '../data';
 import { useProgress } from '../hooks/useProgress';
 
@@ -40,7 +40,13 @@ export default function SubjectDetail() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <button
-                        onClick={() => navigate(-1)}
+                        onClick={() => {
+                            if (window.history.length > 1) {
+                                navigate(-1);
+                            } else {
+                                navigate('/');
+                            }
+                        }}
                         className="text-primary font-bold text-sm mb-4 flex items-center gap-2 hover:gap-3 transition-all"
                     >
                         <ArrowLeft size={16} /> Back
@@ -58,7 +64,8 @@ export default function SubjectDetail() {
                     <div className="text-4xl font-black text-primary mb-1">
                         {progress.percentage}%
                     </div>
-                    <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Subject Mastery</div>
+                    <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Subject Mastery</div>
+                    <div className="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">({progress.completed}/{progress.total} Subtopics)</div>
                     <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full mt-3 overflow-hidden">
                         <div
                             className="h-full bg-primary rounded-full transition-all duration-500"
@@ -91,7 +98,7 @@ export default function SubjectDetail() {
                 </div>
 
                 {/* Sidebar */}
-                <div className="space-y-6">
+                <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
                     <div className="glass-card p-6">
                         <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
                             <span className="text-primary">⚡</span> Quick Stats
@@ -163,8 +170,9 @@ function TopicAccordion({ topic, topicState, completedSubs, onCycleTopic, getSub
                         onClick={(e) => { e.stopPropagation(); onCycleTopic(); }}
                         className={`px-2.5 py-1 rounded-lg ${cfg.bg} border border-black/5 dark:border-white/5`}
                     >
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${cfg.color}`}>
+                        <span className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${cfg.color}`}>
                             {cfg.label}
+                            <RefreshCw size={10} className="opacity-70" />
                         </span>
                     </button>
                     <motion.div animate={{ rotate: open ? 180 : 0 }} className="text-slate-300 dark:text-slate-600">
@@ -185,19 +193,20 @@ function TopicAccordion({ topic, topicState, completedSubs, onCycleTopic, getSub
                             {topic.subtopics.map((sub) => {
                                 const checked = getSubtopicState(sub.id);
                                 return (
-                                    <div
+                                    <motion.div
                                         key={sub.id}
+                                        whileTap={{ scale: 0.98 }}
                                         className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-dark-hover transition-all cursor-pointer group"
                                         onClick={() => toggleSubtopicState(sub.id)}
                                     >
                                         <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${checked ? 'bg-primary border-primary' : 'border-slate-200 dark:border-slate-600 group-hover:border-slate-300 dark:group-hover:border-slate-500'
                                             }`}>
-                                            {checked && <Check size={14} className="text-white stroke-[3px]" />}
+                                            {checked && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}><Check size={14} className="text-white stroke-[3px]" /></motion.div>}
                                         </div>
                                         <span className={`text-sm font-medium ${checked ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-600 dark:text-slate-300'}`}>
                                             {sub.name}
                                         </span>
-                                    </div>
+                                    </motion.div>
                                 );
                             })}
                         </div>
