@@ -25,7 +25,7 @@ export default function Navbar({ streak }) {
     }
 
     return (
-        <div className="fixed top-2 md:top-4 left-0 right-0 z-50 flex justify-center px-4 w-full pointer-events-none">
+        <div className="fixed top-2 md:top-4 left-0 right-0 z-50 flex justify-center px-4 w-full pointer-events-none md:hidden">
             <header className="pointer-events-auto h-14 md:h-16 flex items-center justify-between px-4 md:px-8 liquid-glass rounded-full w-full max-w-5xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
                 {/* Mobile: show brand name; Desktop: show breadcrumb */}
                 <div className="flex items-center gap-2">
